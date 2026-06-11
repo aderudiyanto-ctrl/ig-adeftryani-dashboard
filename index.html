@@ -50,8 +50,10 @@ h2.sec span{color:var(--mut);font-weight:500;text-transform:none;letter-spacing:
 .up{color:var(--green)}.down{color:var(--red)}.flat{color:var(--mut)}
 .two{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
 @media(max-width:900px){.two{grid-template-columns:1fr}}
-.chartbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;height:330px}
-.mixlegend{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.chartbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;height:330px;overflow:hidden;min-width:0}
+.mixbox{display:flex;align-items:center;gap:18px}
+.mixcanvas{position:relative;width:190px;height:190px;flex:none}
+.mixlegend{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;justify-content:center}
 .mixrow{display:flex;align-items:center;gap:9px;font-size:14px}
 .mixrow .sw{width:13px;height:13px;border-radius:3px}.mixrow b{margin-left:auto;font-weight:800}
 .mixnote{font-size:12px;color:var(--mut);margin-top:10px}
@@ -146,7 +148,7 @@ footer{max-width:1240px;margin:40px auto 0;padding:18px 30px 0}
   <h2 class="sec">Views Per Post &amp; Content Mix</h2>
   <div class="two">
     <div class="chartbox"><canvas id="viewsChart"></canvas></div>
-    <div class="chartbox"><div style="display:grid;grid-template-columns:1fr 1fr;height:100%;gap:10px"><canvas id="mixChart"></canvas><div class="mixlegend" id="mixLegend"></div></div></div>
+    <div class="chartbox mixbox"><div class="mixcanvas"><canvas id="mixChart"></canvas></div><div class="mixlegend" id="mixLegend"></div></div>
   </div>
 
   <h2 class="sec">Top 5 Content <span>— why they won</span></h2>
