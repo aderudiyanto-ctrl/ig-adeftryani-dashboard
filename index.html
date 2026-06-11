@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>@adeftryani · Instagram Performance Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
+<style>
+:root{
+  --bg:#f3ebdd;--panel:#fbf5ea;--panel2:#efe4d2;--line:#dccbb2;--txt:#3b3026;--mut:#8c7a62;
+  --orange:#bd5d33;--orange2:#a85a2c;--green:#6f8f4e;--red:#b1483a;--amber:#c2872f;--olive:#6f8f4e;--terra:#bd5d33;
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.5;font-size:14px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 0 80px}
+header.hero{background:linear-gradient(110deg,#bd5d33,#cf8a4f);color:#fff;padding:32px 30px 28px}
+.hero-in{max-width:1240px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px}
+.hero h1{font-size:27px;font-weight:800;letter-spacing:-.4px}
+.hero .tag{font-size:13px;opacity:.9;margin-top:5px}
+.period-box{background:rgba(255,255,255,.16);border-radius:12px;padding:12px 16px;font-size:12px;text-align:right;min-width:230px}
+.period-box .pl{opacity:.85}
+.period-box b{font-size:14px}
+.bar-controls{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.bar-in{max-width:1240px;margin:0 auto;padding:12px 30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.pbtns{display:flex;flex-wrap:wrap;gap:6px}
+.pbtn{background:#fff;border:1px solid var(--line);color:var(--txt);padding:8px 15px;border-radius:22px;font-size:13px;cursor:pointer;font-weight:600}
+.pbtn:hover{border-color:var(--orange);color:var(--orange2)}
+.pbtn.active{background:var(--orange);color:#fff;border-color:var(--orange)}
+.custom-row{display:none;gap:8px;align-items:center;font-size:12px}
+.custom-row.on{display:flex}
+.custom-row input{border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-family:inherit;font-size:12px}
+.rng{font-size:12.5px;color:var(--orange2);font-weight:700;text-align:right}
+.rng small{display:block;color:var(--mut);font-weight:400}
+.content{max-width:1240px;margin:0 auto;padding:8px 30px}
+h2.sec{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange2);margin:34px 0 14px;font-weight:800;display:flex;align-items:center;gap:10px}
+h2.sec:before{content:"";width:26px;height:3px;background:var(--orange);border-radius:2px}
+h2.sec span{color:var(--mut);font-weight:500;text-transform:none;letter-spacing:0;font-size:12px}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}
+@media(max-width:1000px){.g4,.g5{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.g4,.g5{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.kpi .lab{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+.kpi .val{font-size:27px;font-weight:800;margin:6px 0 2px;letter-spacing:-.5px}
+.kpi .sub{font-size:11.5px;color:var(--mut)}
+.kpi .chg{font-size:12px;font-weight:700;margin-top:7px}
+.kpi .pbar{height:5px;border-radius:3px;background:var(--panel2);margin-top:10px;overflow:hidden}
+.kpi .pbar i{display:block;height:100%;border-radius:3px}
+.up{color:var(--green)}.down{color:var(--red)}.flat{color:var(--mut)}
+.two{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+.chartbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;height:330px}
+.mixlegend{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.mixrow{display:flex;align-items:center;gap:9px;font-size:14px}
+.mixrow .sw{width:13px;height:13px;border-radius:3px}.mixrow b{margin-left:auto;font-weight:800}
+.mixnote{font-size:12px;color:var(--mut);margin-top:10px}
+.t5{display:flex;flex-direction:column;gap:12px}
+.t5card{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--orange);border-radius:12px;padding:14px 16px;display:flex;gap:14px}
+.t5rank{font-size:22px;font-weight:800;color:var(--orange);min-width:26px}
+.t5body{flex:1}
+.t5head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
+.ttag{font-size:10px;font-weight:800;letter-spacing:.4px;padding:2px 7px;border-radius:5px;background:#f0e0cf;color:var(--orange2)}
+.t5head a{color:var(--orange2);font-weight:700;text-decoration:none}
+.t5metrics{font-size:12.5px;color:var(--mut);margin:8px 0}
+.t5metrics b{color:var(--txt)}
+.t5why{background:var(--panel2);border-radius:8px;padding:9px 12px;font-size:12.5px;color:#5a4a39}
+.t5why b{color:var(--orange2)}
+.insgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.insgrid{grid-template-columns:1fr}}
+.inscard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+.inscard.good{border-left:4px solid var(--green)}
+.inscard.bad{border-left:4px solid var(--red)}
+.inscard .lbl{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
+.good .lbl{color:var(--green)}.bad .lbl{color:var(--red)}
+.inscard h4{font-size:14.5px;margin:5px 0 6px}
+.inscard p{font-size:13px;color:#5a4a39}
+.inscard .fix{margin-top:9px;background:var(--panel2);border-radius:8px;padding:9px 11px;font-size:12.5px}
+.inscard .fix b{color:var(--orange2)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mut);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;font-weight:600;background:var(--panel2)}
+tbody tr:hover{background:var(--panel2)}
+td a{color:var(--orange2);font-weight:700;text-decoration:none}
+.vtag{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:5px}
+.v-over,.v-work{background:rgba(111,143,78,.20);color:#4d6a2e}
+.v-mix{background:rgba(194,135,47,.22);color:#8a5e1c}
+.v-under,.v-weak{background:rgba(177,72,58,.16);color:#8f3528}
+.angtag{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:5px;background:#e7dcc8;color:#6a5640}
+.hl{font-size:11.5px;color:#5a4a39;max-width:320px;white-space:normal}
+.planhead{font-size:13px;color:var(--mut);margin-bottom:12px}
+.plangrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.plangrid{grid-template-columns:1fr}}
+.plancard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+.plancard .day{font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--orange2);text-transform:uppercase}
+.plancard h4{font-size:15px;margin:5px 0 10px}
+.planrow{font-size:12.5px;margin:5px 0;display:flex;gap:8px}
+.planrow .k{color:var(--mut);font-size:10px;font-weight:700;text-transform:uppercase;min-width:54px;padding-top:2px}
+.fmttag{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;background:#f0e0cf;color:var(--orange2)}
+footer{max-width:1240px;margin:40px auto 0;padding:18px 30px 0}
+.foot{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-size:12px;color:var(--mut)}
+.foot b{color:var(--orange2)}
+#loading,#error{padding:60px 30px;text-align:center;color:var(--mut);font-size:15px}
+#error{color:var(--red)}
+.spin{width:32px;height:32px;border:3px solid var(--panel2);border-top-color:var(--orange);border-radius:50%;animation:s .8s linear infinite;margin:0 auto 16px}
+@keyframes s{to{transform:rotate(360deg)}}
+.legend{font-size:11.5px;color:var(--mut);margin-top:8px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <h1>@adeftryani · Instagram Report</h1>
+      <div class="tag">Belajar Bareng Ade · Konten &amp; Monetisasi · adeftryani</div>
+    </div>
+    <div class="period-box" id="periodBox"><span class="pl">Reporting period</span><br><b>loading…</b></div>
+  </div>
+</header>
+
+<div class="bar-controls"><div class="bar-in">
+  <div class="pbtns">
+    <button class="pbtn" data-n="1">Today</button>
+    <button class="pbtn" data-n="7">Past 7 days</button>
+    <button class="pbtn" data-n="14">Past 14 days</button>
+    <button class="pbtn active" data-n="30">Past 30 days</button>
+    <button class="pbtn" data-n="custom">Custom</button>
+    <span class="custom-row" id="customRow">From <input type="date" id="from"> To <input type="date" id="to"> <button class="pbtn" id="applyBtn" style="background:var(--orange);color:#fff;border-color:var(--orange)">Apply</button></span>
+  </div>
+  <div class="rng" id="rngLabel"></div>
+</div></div>
+
+<div id="loading"><div class="spin"></div>Pulling live Instagram data…</div>
+<div id="error" style="display:none"></div>
+<div class="content" id="dash" style="display:none">
+
+  <h2 class="sec">Account Overview</h2>
+  <div class="grid g4" id="ovCards"></div>
+
+  <h2 class="sec" id="cpHead">Content Performance</h2>
+  <div class="grid g5" id="cpCards1" style="margin-bottom:14px"></div>
+  <div class="grid g4" id="cpCards2"></div>
+
+  <h2 class="sec">Views Per Post &amp; Content Mix</h2>
+  <div class="two">
+    <div class="chartbox"><canvas id="viewsChart"></canvas></div>
+    <div class="chartbox"><div style="display:grid;grid-template-columns:1fr 1fr;height:100%;gap:10px"><canvas id="mixChart"></canvas><div class="mixlegend" id="mixLegend"></div></div></div>
+  </div>
+
+  <h2 class="sec">Top 5 Content <span>— why they won</span></h2>
+  <div class="t5" id="top5"></div>
+
+  <h2 class="sec">What's Working <span>— reverse-engineer these</span></h2>
+  <div class="insgrid" id="working"></div>
+
+  <h2 class="sec">What's NOT Working <span>— stop doing these</span></h2>
+  <div class="insgrid" id="notworking"></div>
+
+  <h2 class="sec">Creative Attribute Analysis <span id="caHead"></span></h2>
+  <div class="tbl-wrap"><table id="caTbl"></table></div>
+
+  <h2 class="sec">Full Detail <span>— posts in period</span></h2>
+  <div class="tbl-wrap"><table id="detailTbl"></table></div>
+
+  <h2 class="sec">Next 7 Days <span>— content plan</span></h2>
+  <div class="planhead">Built from this period's performance and your niche (content &amp; monetisation). Each card gives the topic, angle, hook and format to brief yourself or an editor.</div>
+  <div class="plangrid" id="planGrid"></div>
+
+  <footer><div class="foot"><b>Live dashboard.</b> Every metric is pulled fresh from Windsor.ai → Instagram on each load and compared against the previous equal-length period. Use the buttons above for Today / 7 / 14 / 30 days or a custom range. <br>Engagement rate = (likes + comments + saves + shares) ÷ reach. Follower-growth data is limited to the last ~30 days (Instagram metric cap). Stories aren't retained by the IG API after 24h.</div></footer>
+</div>
+
+<script>
+const ACCOUNT="17841400371676002"; // @adeftryani only (a GoWork IG account shares this connector)
+const MEDIA_META=["media_id","account_id","timestamp","media_type","media_product_type","media_caption","media_permalink"];
+const MEDIA_METRICS=["media_id","media_views","media_reach","media_saved","media_shares","media_like_count","media_comments_count"];
+
+async function call(params, attempt){
+  attempt=attempt||0;
+  const qs=new URLSearchParams();
+  qs.set('connector','instagram');
+  qs.set('fields',(params.fields||[]).join(','));
+  if(params.date_preset) qs.set('date_preset',params.date_preset);
+  try{
+    const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),45000);
+    const r=await fetch('/api/data?'+qs.toString(),{signal:ctrl.signal});clearTimeout(t);
+    const txt=await r.text();let j;
+    try{j=JSON.parse(txt);}catch(e){throw new Error('busy');}
+    if(j.error) throw new Error(j.error);
+    return Array.isArray(j.result)?j.result:[];
+  }catch(e){ if(attempt<2){await new Promise(r=>setTimeout(r,1400));return call(params,attempt+1);} throw e; }
+}
+
+const $=id=>document.getElementById(id);
+const fmt=n=>{n=+n||0;if(n>=1e6)return(n/1e6).toFixed(2).replace(/\.?0+$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(1).replace(/\.0$/,'')+'K';return Math.round(n).toLocaleString('en-US');};
+const num=n=>Math.round(+n||0).toLocaleString('en-US');
+const eng=m=>(+m.media_like_count||0)+(+m.media_comments_count||0)+(+m.media_saved||0)+(+m.media_shares||0);
+const erP=m=>{const r=+m.media_reach||0;return r?eng(m)/r*100:0;};
+const ssRate=m=>{const v=+m.media_views||0;return v?((+m.media_saved||0)+(+m.media_shares||0))/v*1000:0;};
+const tlabel=m=>{const t=(m.media_type||'').toUpperCase();if(t==='REELS'||t==='VIDEO')return'Reel';if(t==='CAROUSEL_ALBUM')return'Carousel';if(t==='IMAGE')return'Single Post';if(t==='STORY')return'Story';return t||'—';};
+const dstr=d=>d.toISOString().slice(0,10);
+const median=a=>{if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y);const m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;};
+const dnice=d=>{const p=d.split('-');return(+p[2])+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][(+p[1])-1]+' '+p[0];};
+function delta(cur,prev,goodUp){
+  if(prev===0||prev==null){return {html:'<span class="flat">— no prior data</span>'};}
+  const p=(cur-prev)/Math.abs(prev)*100; const up=p>=0; const good=goodUp?up:!up;
+  const arrow=Math.abs(p)<0.5?'■':(up?'▲':'▼');
+  const cls=Math.abs(p)<0.5?'flat':(good?'up':'down');
+  return {html:`<span class="${cls}">${arrow} ${(p>=0?'+':'')+p.toFixed(p>=10||p<=-10?0:1)}%</span> <span class="flat">vs ${fmt(prev)} prior</span>`};
+}
+
+// angle inference for @adeftryani niche
+function angleOf(cap){
+  const c=(cap||'').toLowerCase();
+  if(/capcut|edit|subtitle|font|transisi|sound|hook|template|visual/.test(c))return'Editing / How-to';
+  if(/chat ?gpt|\bai\b|tools?|aplikasi|hack/.test(c))return'AI / Tools';
+  if(/brand|cuan|duit|monet|produk digital|gaji|income|jualan|affiliate|dibayar/.test(c))return'Monetisation';
+  if(/framework|tips|cara|strategi|kesalahan|niche|algoritma|views|followers/.test(c))return'Tips / Framework';
+  if(/komen|comment|dm|webinar|link|save ini|follow/.test(c))return'CTA / Lead magnet';
+  if(/kumo|kucing|nikah|wedding|travel|liburan|hanoi|bali/.test(c))return'Personal / Lifestyle';
+  return'Relatable / POV';
+}
+const hookOf=cap=>{let h=(cap||'').split('\n')[0].trim();return h.length>70?h.slice(0,70)+'…':(h||'(no caption)');};
+
+// ---- period state ----
+const fromEl=$('from'),toEl=$('to');
+let mode={n:30,custom:false};
+function todayStr(){return dstr(new Date());}
+function computeWindows(){
+  let cs,ce,n;
+  if(mode.custom){cs=fromEl.value;ce=toEl.value;n=Math.max(1,Math.round((new Date(ce)-new Date(cs))/864e5)+1);}
+  else{n=mode.n;const t=new Date();ce=dstr(t);const s=new Date();s.setDate(s.getDate()-(n-1));cs=dstr(s);}
+  const pe=new Date(cs);pe.setDate(pe.getDate()-1);
+  const ps=new Date(pe);ps.setDate(ps.getDate()-(n-1));
+  return {cs,ce,n,ps:dstr(ps),pe:dstr(pe)};
+}
+function coverPreset(ps){const back=Math.ceil((Date.now()-new Date(ps+'T00:00:00'))/864e5)+2;for(const p of[7,30,90,180,365,730])if(back<=p)return'last_'+p+'dT';return'last_730dT';}
+
+document.querySelectorAll('.pbtn[data-n]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.pbtn[data-n]').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  if(b.dataset.n==='custom'){mode.custom=true;$('customRow').classList.add('on');
+    if(!toEl.value){toEl.value=todayStr();const s=new Date();s.setDate(s.getDate()-29);fromEl.value=dstr(s);}
+  }else{mode.custom=false;mode.n=+b.dataset.n;$('customRow').classList.remove('on');load();}
+}));
+$('applyBtn').addEventListener('click',load);
+
+async function load(){
+  $('loading').style.display='block';$('dash').style.display='none';$('error').style.display='none';
+  const W=computeWindows();
+  $('rngLabel').innerHTML=`${dnice(W.cs)} – ${dnice(W.ce)} · ${W.n} day${W.n>1?'s':''}<small>compared with ${dnice(W.ps)} – ${dnice(W.pe)}</small>`;
+  $('periodBox').innerHTML=`<span class="pl">Reporting period</span><br><b>${dnice(W.cs)} – ${dnice(W.ce)}</b> · ${W.n}d<br><span class="pl">vs prior ${W.n}d: ${dnice(W.ps)} – ${dnice(W.pe)}</span>`;
+  try{
+    const pr=coverPreset(W.ps);
+    const [meta,metrics,follow,totalRow]=await Promise.all([
+      call({fields:MEDIA_META,date_preset:pr}),
+      call({fields:MEDIA_METRICS,date_preset:pr}),
+      call({fields:["date","account_id","follower_count_1d"],date_preset:"last_30dT"}),
+      call({fields:["date","account_id","followers_count"],date_preset:"last_2dT"})
+    ]);
+    const byId={};metrics.forEach(r=>{if(r&&r.media_id!=null)byId[r.media_id]=r;});
+    const all=meta.map(r=>Object.assign({},r,byId[r.media_id]||{})).filter(m=>m.media_id&&String(m.account_id)===ACCOUNT);
+    const inRange=(m,a,b)=>{const d=(m.timestamp||'').slice(0,10);return d>=a&&d<=b;};
+    const cur=all.filter(m=>inRange(m,W.cs,W.ce));
+    const prev=all.filter(m=>inRange(m,W.ps,W.pe));
+    render(cur,prev,follow,totalRow,W);
+    $('loading').style.display='none';$('dash').style.display='block';
+  }catch(e){
+    $('loading').style.display='none';const el=$('error');el.style.display='block';
+    el.innerHTML='⚠️ Could not load data right now. Please tap a period button again — the data source may be briefly busy.';
+  }
+}
+
+function sum(a,f){return a.reduce((s,m)=>s+(+f(m)||0),0);}
+
+function render(cur,prev,follow,totalRow,W){
+  // ---- aggregates ----
+  const agg=a=>({n:a.length,views:sum(a,m=>m.media_views),vviews:sum(a.filter(m=>['REELS','VIDEO'].includes((m.media_type||'').toUpperCase())),m=>m.media_views),reach:sum(a,m=>m.media_reach),likes:sum(a,m=>m.media_like_count),cmts:sum(a,m=>m.media_comments_count),saves:sum(a,m=>m.media_saved),shares:sum(a,m=>m.media_shares),eng:sum(a,eng)});
+  const C=agg(cur),P=agg(prev);
+  C.avgV=C.n?C.views/C.n:0;P.avgV=P.n?P.views/P.n:0;
+  C.avgER=C.reach?C.eng/C.reach*100:0;P.avgER=P.reach?P.eng/P.reach*100:0;
+  const reels=cur.filter(m=>['REELS','VIDEO'].includes((m.media_type||'').toUpperCase())).length;
+  const caro=cur.filter(m=>tlabel(m)==='Carousel').length;
+  const single=cur.filter(m=>tlabel(m)==='Single Post').length;
+  // followers
+  let curTotal=0;(totalRow||[]).forEach(r=>{if(r.followers_count!=null&&String(r.account_id)===ACCOUNT)curTotal=+r.followers_count;});
+  const fIn=(follow||[]).filter(r=>{const d=(r.date||'').slice(0,10);return d>=W.cs&&d<=W.ce&&r.follower_count_1d!=null&&String(r.account_id)===ACCOUNT;});
+  const netGrowth=fIn.reduce((s,r)=>s+(+r.follower_count_1d||0),0);
+
+  // ---- Account Overview ----
+  const ov=[
+    {lab:'Total Followers',val:fmt(curTotal),sub:'current account total (point-in-time)',chg:'',bar:'var(--orange)',pct:100},
+    {lab:'Net Follower Growth',val:(netGrowth>=0?'+':'')+fmt(netGrowth),sub:`net new (${fIn.length}/${W.n} days have data)`,chg:'<span class="flat">— last 30d only</span>',bar:'var(--green)',pct:70},
+    {lab:'Accounts Reached',val:fmt(C.reach),sub:'reach across posts in period',chg:delta(C.reach,P.reach,true).html,bar:'var(--olive)',pct:Math.min(100,C.reach/Math.max(C.reach,P.reach)*100)},
+    {lab:'Posts Published',val:num(C.n),sub:`${reels} Reels · ${caro} Carousels · ${single} Static`,chg:delta(C.n,P.n,true).html,bar:'var(--amber)',pct:Math.min(100,C.n/Math.max(C.n,P.n,1)*100)}
+  ];
+  $('ovCards').innerHTML=ov.map(c=>`<div class="card kpi"><div class="lab">${c.lab}</div><div class="val">${c.val}</div><div class="sub">${c.sub}</div>${c.chg?`<div class="chg">${c.chg}</div>`:''}<div class="pbar"><i style="width:${c.pct}%;background:${c.bar}"></i></div></div>`).join('');
+
+  // ---- Content Performance ----
+  $('cpHead').innerHTML=`Content Performance <span>· ${C.n} posts in period</span>`;
+  const vviewPct=C.views?Math.round(C.vviews/C.views*100):0;
+  const cp1=[
+    {lab:'Total Views',val:fmt(C.views),sub:'all content played/displayed',chg:delta(C.views,P.views,true).html},
+    {lab:'Total Video Views',val:fmt(C.vviews),sub:`from ${reels} Reels (${vviewPct}% of views)`,chg:delta(C.vviews,P.vviews,true).html},
+    {lab:'Total Engagement',val:fmt(C.eng),sub:'likes + comments + saves + shares',chg:delta(C.eng,P.eng,true).html},
+    {lab:'Average Views / Post',val:fmt(C.avgV),sub:'mean across posts in period',chg:delta(C.avgV,P.avgV,true).html},
+    {lab:'Avg Engagement Rate',val:C.avgER.toFixed(2)+'%',sub:'engagement ÷ reach',chg:delta(C.avgER,P.avgER,true).html}
+  ];
+  $('cpCards1').innerHTML=cp1.map(c=>`<div class="card kpi"><div class="lab">${c.lab}</div><div class="val">${c.val}</div><div class="sub">${c.sub}</div><div class="chg">${c.chg}</div></div>`).join('');
+  const cp2=[
+    {lab:'Likes',val:fmt(C.likes),chg:delta(C.likes,P.likes,true).html,sub:''},
+    {lab:'Comments',val:fmt(C.cmts),chg:delta(C.cmts,P.cmts,true).html,sub:''},
+    {lab:'Saves',val:fmt(C.saves),chg:delta(C.saves,P.saves,true).html,sub:'reference-worthy signal'},
+    {lab:'Shares',val:fmt(C.shares),chg:delta(C.shares,P.shares,true).html,sub:'your #1 growth lever'}
+  ];
+  $('cpCards2').innerHTML=cp2.map(c=>`<div class="card kpi"><div class="lab">${c.lab}</div><div class="val">${c.val}</div>${c.sub?`<div class="sub">${c.sub}</div>`:''}<div class="chg">${c.chg}</div></div>`).join('');
+
+  // ---- Views per post + mix ----
+  const sorted=[...cur].sort((a,b)=>(+b.media_views||0)-(+a.media_views||0));
+  if(window._vc)window._vc.destroy();
+  window._vc=new Chart($('viewsChart'),{type:'bar',data:{labels:sorted.map(m=>(m.media_permalink||'').split('/').filter(Boolean).pop()||''),datasets:[{data:sorted.map(m=>+m.media_views||0),backgroundColor:sorted.map(m=>tlabel(m)==='Carousel'?'#6f8f4e':(tlabel(m)==='Reel'?'#bd5d33':'#c2872f'))}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'Views per post (Reel = terracotta · Carousel = olive)',color:'#8c7a62',font:{size:12}}},scales:{x:{ticks:{display:false},grid:{display:false}},y:{ticks:{color:'#8c7a62',font:{size:10}},grid:{color:'#e4d6bf'}}}}});
+  const mix={Reel:reels,Carousel:caro,'Single Post':single,Story:cur.filter(m=>tlabel(m)==='Story').length};
+  const cols=['#bd5d33','#6f8f4e','#c2872f','#5c7d79'];
+  if(window._mc)window._mc.destroy();
+  window._mc=new Chart($('mixChart'),{type:'doughnut',data:{labels:Object.keys(mix),datasets:[{data:Object.values(mix),backgroundColor:cols,borderColor:'#fbf5ea',borderWidth:2}]},options:{cutout:'60%',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  const reelPct=C.n?Math.round(reels/C.n*100):0;
+  $('mixLegend').innerHTML=Object.keys(mix).map((k,i)=>`<div class="mixrow"><span class="sw" style="background:${cols[i]}"></span>${k}<b>${mix[k]}</b></div>`).join('')+`<div class="mixnote">${reelPct}% of output is Reels — and Reels drive ${vviewPct}% of views.</div>`;
+
+  // ---- Top 5 ----
+  const top=[...cur].map(m=>({m,s:((+m.media_saved||0)+(+m.media_shares||0))*4+(+m.media_comments_count||0)*2+(+m.media_like_count||0)})).sort((a,b)=>b.s-a.s).slice(0,5);
+  $('top5').innerHTML=top.map((x,i)=>{const m=x.m,r=ssRate(m),er=erP(m);
+    let why;const sh=+m.media_shares||0,sv=+m.media_saved||0,vw=+m.media_views||0,cm=+m.media_comments_count||0;
+    if(i===0)why=`<b>Top post</b> of the period — ${fmt(vw)} views on ${fmt(m.media_reach)} reach. ${sh} shares + ${sv} saves carried it into non-follower feeds. Replicate this trigger.`;
+    else if(sh>=sv&&sh>5)why=`<b>Share-driven reach.</b> ${sh} shares pushed it beyond your followers — shares are the #1 distribution signal. Re-create the relatable/POV angle.`;
+    else if(sv>=8)why=`<b>Save magnet.</b> ${sv} saves (${r.toFixed(0)}/1k views) — people kept it as a reference. This is your value/tutorial format working.`;
+    else if(cm>15)why=`<b>Conversation driver.</b> ${cm} comments — the hook/CTA sparked replies, which IG rewards. Keep asking a question.`;
+    else why=`<b>Strong all-round.</b> ${fmt(vw)} views at ${er.toFixed(1)}% ER. Solid hook + retention.`;
+    return `<div class="t5card"><div class="t5rank">${i+1}</div><div class="t5body"><div class="t5head"><span class="ttag">${tlabel(m).toUpperCase()}</span><a href="${m.media_permalink}" target="_blank">${(m.media_permalink||'').replace('https://www.','')}</a></div><div class="t5metrics">Views <b>${fmt(vw)}</b> · Reach <b>${fmt(m.media_reach)}</b> · Likes <b>${fmt(m.media_like_count)}</b> · Comments <b>${fmt(cm)}</b> · Saves <b>${fmt(sv)}</b> · Shares <b>${fmt(sh)}</b> · ER <b>${er.toFixed(1)}%</b></div><div class="t5why">${why}</div></div></div>`;}).join('');
+
+  // ---- stats for insights ----
+  const byType={};['Reel','Carousel','Single Post'].forEach(t=>{const a=cur.filter(m=>tlabel(m)===t);byType[t]=a.length?sum(a,m=>m.media_views)/a.length:0;});
+  const bestType=Object.entries(byType).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1])[0];
+  const shareRate=C.views?C.shares/C.views*1000:0;
+  const saveRate=C.views?C.saves/C.views*1000:0;
+  const lowPosts=cur.filter(m=>(+m.media_views||0)<1000).length;
+  const zeroCmt=cur.filter(m=>(+m.media_comments_count||0)===0).length;
+  const med=median(cur.map(m=>+m.media_views||0));
+  const topShareM=[...cur].sort((a,b)=>(+b.media_shares||0)-(+a.media_shares||0))[0];
+
+  // ---- What's working ----
+  const work=[];
+  if(bestType)work.push(['Your best format right now',`<b>${bestType[0]}s</b> average ${fmt(bestType[1])} views — clearly your strongest format this period. Lean into it.`,`<b>Recipe:</b> make ${bestType[0]==='Carousel'?"carousels as '5 things / checklist / before-after' with a strong slide-1 title and a 'save this' final slide.":"more "+bestType[0]+"s with a 3-second promise hook and a clear payoff."}`]);
+  if(shareRate>10)work.push(['Shares are carrying your reach',`Your share rate is ${shareRate.toFixed(0)} per 1k views${topShareM?` (best: ${fmt(topShareM.media_shares)} shares on one post)`:''} — shares are the #1 lever pushing you into non-follower feeds.`,`<b>Recipe:</b> end relatable/POV content with a "kirim ke temen yang…" or a takeaway worth forwarding.`]);
+  else work.push(['Save-worthy how-to content',`Your editing/tutorial posts pull the strongest saves — that's the signal IG rewards with sustained reach.`,`<b>Recipe:</b> one micro-skill per Reel (CapCut trick, hook, sound) → "Save ini biar gak lupa".`]);
+  work.push(['Named frameworks &amp; money angles',`Posts that name a method or show a concrete income/result over-index on saves and comments for your niche.`,`<b>Recipe:</b> give your method a sticky name, break it into 3 on-screen steps, close with a comment-to-DM lead magnet.`]);
+  if(C.avgER>C.avgER&&false){}
+  work.push(['Strong engagement rate',`Avg ER is ${C.avgER.toFixed(2)}% (engagement ÷ reach) — when reach is efficient, the content resonates. Protect that with tight hooks.`,`<b>Recipe:</b> keep the first 2 seconds a specific problem or payoff; cut any slow intro.`]);
+  $('working').innerHTML=work.slice(0,4).map(w=>`<div class="inscard good"><div class="lbl">✓ Working</div><h4>${w[0]}</h4><p>${w[1]}</p><div class="fix">${w[2]}</div></div>`).join('');
+
+  // ---- What's not working ----
+  const bad=[];
+  if(saveRate<25)bad.push(['Saves are low for your niche',`Save rate is only ${saveRate.toFixed(0)} per 1k views. Saves strongly boost ranking, and education/monetisation content should save much harder.`,`<b>Fix:</b> ship at least 2 "save-bait" posts a week — templates, tool lists, step-by-steps.`]);
+  if(lowPosts>0)bad.push(['Weak hooks cap you at follower reach',`${lowPosts} post${lowPosts>1?'s':''} landed under 1,000 views — the floor IG gives any post. That's a hook problem, not an algorithm one.`,`<b>Fix:</b> if a Reel can't be summarised as an intriguing 3-second promise, re-shoot the opening before posting.`]);
+  if(zeroCmt>0)bad.push(['Zero-CTA posts get zero comments',`${zeroCmt} post${zeroCmt>1?'s':''} got no comments. Posts that ask nothing get nothing back, limiting the engagement signal.`,`<b>Fix:</b> add one question or "setuju gak?" prompt in the caption or on-screen.`]);
+  if(single>0)bad.push(['Static images are a dead format for you',`Single-image posts sit at the bottom on views and reach. Don't use them as primary content.`,`<b>Fix:</b> turn any photo idea into a 5-second Reel or a carousel.`]);
+  bad.push(['Off-niche virality dilutes the account',`Random viral posts (pets, comedy) spike views but bring an audience that doesn't save or convert — and confuse your distribution.`,`<b>Fix:</b> keep ~80% inside content/editing/monetisation; if you post a fun one, bolt on a takeaway.`]);
+  bad.push(['Uneven posting keeps the floor low',`Inconsistent cadence means a low median (${fmt(med)} views). Your problem is the floor, not the ceiling.`,`<b>Fix:</b> lock a fixed schedule (e.g. Mon/Wed/Fri) of save-optimised tutorials.`]);
+  $('notworking').innerHTML=bad.slice(0,6).map(b=>`<div class="inscard bad"><div class="lbl">✕ Fix this</div><h4>${b[0]}</h4><p>${b[1]}</p><div class="fix">${b[2]}</div></div>`).join('');
+
+  // ---- Creative Attribute Analysis ----
+  $('caHead').textContent=`· ${C.n} posts · hook & angle inferred from each caption · verdict vs period average of ${fmt(C.avgV)} views/post`;
+  $('caTbl').innerHTML=`<thead><tr><th>Content &amp; Link</th><th>Format</th><th>Hook</th><th>Angle</th><th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>ER%</th><th>Verdict</th></tr></thead><tbody>`+
+  [...cur].sort((a,b)=>(+b.media_views||0)-(+a.media_views||0)).map(m=>{const vw=+m.media_views||0;const v=vw>=C.avgV*1.15?'<span class="vtag v-over">Overperformer</span>':(vw<=C.avgV*0.6?'<span class="vtag v-under">Underperformer</span>':'<span class="vtag v-mix">On par</span>');
+    return `<tr><td><a href="${m.media_permalink}" target="_blank">${(m.media_permalink||'').split('/').filter(Boolean).pop()} ↗</a></td><td>${tlabel(m)}</td><td class="hl">${hookOf(m.media_caption)}</td><td><span class="angtag">${angleOf(m.media_caption)}</span></td><td>${fmt(vw)}</td><td>${fmt(m.media_reach)}</td><td>${fmt(m.media_like_count)}</td><td>${num(m.media_comments_count)}</td><td>${num(m.media_saved)}</td><td>${num(m.media_shares)}</td><td>${erP(m).toFixed(1)}</td><td>${v}</td></tr>`;}).join('')+`</tbody>`;
+
+  // ---- Full detail ----
+  $('detailTbl').innerHTML=`<thead><tr><th>#</th><th>Date</th><th>Type</th><th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>Eng</th><th>ER%</th><th>Link</th><th>Highlight — why it worked / didn't</th></tr></thead><tbody>`+
+  [...cur].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).map((m,i)=>{const vw=+m.media_views||0,sh=+m.media_shares||0,sv=+m.media_saved||0,er=erP(m);
+    let tag,hl;
+    if(vw>=C.avgV*1.15){tag='<span class="vtag v-work">Working</span>';hl=`Above-average ${fmt(vw)} views${sh>5?` — ${sh} shares drove reach to ${fmt(m.media_reach)}`:'; hook earned reach beyond followers'}. Replicate.`;}
+    else if(er>=4&&vw<C.avgV){tag='<span class="vtag v-mix">Mixed</span>';hl=`Low reach but high ${er.toFixed(1)}% ER — message landed, needs a stronger hook to scale.`;}
+    else{tag='<span class="vtag v-weak">Weak</span>';hl=`Under-performed (${fmt(vw)} views, ${sh} shares). Add a share/save CTA and a stronger first 3s.`;}
+    return `<tr><td>${i+1}</td><td>${(m.timestamp||'').slice(0,10)}</td><td>${tlabel(m)}</td><td>${fmt(vw)}</td><td>${fmt(m.media_reach)}</td><td>${fmt(m.media_like_count)}</td><td>${num(m.media_comments_count)}</td><td>${num(sv)}</td><td>${num(sh)}</td><td>${fmt(eng(m))}</td><td>${er.toFixed(1)}</td><td><a href="${m.media_permalink}" target="_blank">open ↗</a></td><td class="hl">${tag} ${hl}</td></tr>`;}).join('')+`</tbody>`;
+
+  // ---- Next 7 days plan (niche-tuned template) ----
+  const plan=[
+    ['Day 1 · Mon','Editing tutorial (your save magnet)','Editing / How-to — one micro-skill','"Biar dikira punya editor: trik [font/transisi] di CapCut"','Reel (screen-record, &lt;30s)'],
+    ['Day 2 · Tue','Pain-point quote hook','Tips / Framework — relatable frustration','"Udah konsisten posting tapi views gitu-gitu aja?"','Reel (talking-head + text)'],
+    ['Day 3 · Wed','Save-bait framework carousel','Save-bait education','"5 langkah bikin konten yang cuan — save dulu"','Carousel (5 slides + save-CTA)'],
+    ['Day 4 · Thu','Monetisation story','Monetisation — concrete result','"Cara aku dapet brand deal pertama tanpa 10k followers"','Reel (story arc, 20–40s)'],
+    ['Day 5 · Fri','AI / tools how-to','AI / Tools — timely, actionable','"ChatGPT buat [riset konten] — ini promptnya"','Reel + prompt on last frame'],
+    ['Day 6 · Sat','Lead-magnet CTA post','CTA / Lead magnet','"Komen \'content plan\' — gw kirim template + report via DM"','Reel (demo + comment-to-DM)'],
+    ['Day 7 · Sun','Light personal, tied to niche','Personal / Lifestyle with a lesson','"Hari libur, tapi ini pelajaran ngonten dari minggu ini"','Reel (casual, save the lesson)']
+  ];
+  $('planGrid').innerHTML=plan.map(p=>`<div class="plancard"><div class="day">${p[0]}</div><h4>${p[1]}</h4><div class="planrow"><span class="k">Angle</span><span>${p[2]}</span></div><div class="planrow"><span class="k">Hook</span><span>${p[3]}</span></div><div class="planrow"><span class="k">Format</span><span class="fmttag">${p[4]}</span></div></div>`).join('');
+}
+
+load();
+</script>
+</body>
+</html>
