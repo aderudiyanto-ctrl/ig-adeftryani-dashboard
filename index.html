@@ -90,6 +90,7 @@ td a{color:var(--orange2);font-weight:700;text-decoration:none}
 .v-over,.v-work{background:rgba(111,143,78,.20);color:#4d6a2e}
 .v-mix{background:rgba(194,135,47,.22);color:#8a5e1c}
 .v-under,.v-weak{background:rgba(177,72,58,.16);color:#8f3528}
+.v-break{background:linear-gradient(90deg,#bd5d33,#c2872f);color:#fff;box-shadow:0 1px 4px rgba(189,93,51,.35)}
 .angtag{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:5px;background:#e7dcc8;color:#6a5640}
 .hl{font-size:11.5px;color:#5a4a39;max-width:320px;white-space:normal}
 .planhead{font-size:13px;color:var(--mut);margin-bottom:12px}
@@ -172,15 +173,17 @@ footer{max-width:1240px;margin:40px auto 0;padding:18px 30px 0}
   <h2 class="sec">What's NOT Working <span>— stop doing these</span></h2>
   <div class="insgrid" id="notworking"></div>
 
-  <h2 class="sec">Creative Attribute Analysis <span id="caHead"></span></h2>
-  <div class="tbl-wrap"><table id="caTbl"></table></div>
-
-  <h2 class="sec">Full Detail <span>— posts in period</span></h2>
-  <div class="tbl-wrap"><table id="detailTbl"></table></div>
+  <h2 class="sec">Content Breakdown <span id="cbHead"></span></h2>
+  <div class="tbl-wrap"><table id="cbTbl"></table></div>
+  <div class="footnote">One row per post = caption, hook &amp; angle + every metric + verdict + why it worked/didn't. <b>Verdict is benchmarked against the MEDIAN</b> (not the average — one viral post would skew the mean). 🚀 Breakout = ≥3× median views · Overperformer ≥1.25× · Underperformer ≤0.5× · else On par. Retention = avg watch time per Reel; Ret.Rate (watch-through %) needs video duration, which Instagram's API doesn't expose, so it shows "—". New followers aren't attributed per post by Instagram (account-level only).</div>
 
   <h2 class="sec">Retention Ranking <span>— which Reels HOLD attention (avg watch time, sorted)</span></h2>
   <div class="retwrap" id="igRet"></div>
   <div class="footnote">Ranked by Instagram's <b>avg watch time per Reel</b> (the closest thing IG gives to TikTok's watch-through). Bar colour: 🟢 ≥10s strong · 🟠 6–10s mid · 🔴 &lt;6s drops fast. Carousels/static excluded (no watch-time). Click "open ↗" to view the Reel.</div>
+
+  <h2 class="sec">Next 7 Days — Instagram <span>— IG-specific content plan</span></h2>
+  <div class="planhead">Tuned for <b>Instagram</b> behaviour: saves &amp; shares drive reach, carousels are a save magnet, and Reels need a strong 3-second hook. Each card = topic, angle, hook and format.</div>
+  <div class="plangrid" id="planGrid"></div>
 
   <h2 class="sec" style="border-top:2px solid #e4d6bf;padding-top:30px;margin-top:34px">📱 TikTok Report — @adeftryani <span>Belajar Bareng Ade · same framework as IG · video-native metrics</span></h2>
   <div id="ttLoad" class="card" style="color:var(--mut);font-size:13px">Memuat data TikTok…</div>
@@ -209,17 +212,14 @@ footer{max-width:1240px;margin:40px auto 0;padding:18px 30px 0}
     <h2 class="sec">TikTok · What's NOT Working <span>— stop doing these</span></h2>
     <div class="insgrid" id="ttBad"></div>
 
-    <h2 class="sec">TikTok · Creative Attribute Analysis <span id="ttCaHead"></span></h2>
-    <div class="tbl-wrap"><table id="ttCaTbl"></table></div>
+    <h2 class="sec">TikTok · Content Breakdown <span id="ttCbHead"></span></h2>
+    <div class="tbl-wrap"><table id="ttCbTbl"></table></div>
+    <div class="footnote">One row per video = caption, hook &amp; angle + every metric + verdict + why it worked/didn't. <b>Verdict benchmarked against the MEDIAN.</b> 🚀 Breakout = ≥3× median views · Overperformer ≥1.25× · Underperformer ≤0.5× · else On par. Retention = avg watch (detik) · Ret.Rate = watch-through % (avg watch ÷ durasi) · Full-watched = % nonton sampai habis · ER = (likes+comments+shares+favorites) ÷ reach · New foll. = follower baru dari video itu.</div>
 
-    <h2 class="sec">TikTok · Full Detail <span>— videos in period</span></h2>
-    <div class="tbl-wrap"><table id="ttTbl"></table></div>
-    <div class="footnote">Avg watch &amp; duration dalam detik · Watch-through % = avg watch ÷ durasi · Full-watched % = % penonton yang nonton sampai habis · ER = (likes+comments+shares+favorites) ÷ reach · New followers = follower baru dari video itu. Sumber: TikTok via Windsor.ai.</div>
+    <h2 class="sec">TikTok · Next 7 Days <span>— TikTok-specific content plan</span></h2>
+    <div class="planhead">Tuned for <b>TikTok</b> behaviour: the For You page rewards <b>watch-through &amp; completion</b>, so the first 2 seconds and a tight payoff matter most. Each card = topic, angle, hook and format.</div>
+    <div class="plangrid" id="ttPlanGrid"></div>
   </div>
-
-  <h2 class="sec">Next 7 Days <span>— content plan</span></h2>
-  <div class="planhead">Built from this period's performance and your niche (content &amp; monetisation). Each card gives the topic, angle, hook and format to brief yourself or an editor.</div>
-  <div class="plangrid" id="planGrid"></div>
 
   <footer><div class="foot"><b>Live dashboard.</b> Every metric is pulled fresh from Windsor.ai → Instagram &amp; TikTok on each load and compared against the previous equal-length period. Use the buttons above for Today / 7 / 14 / 30 days or a custom range. <br>Engagement rate = (likes + comments + saves + shares) ÷ reach. Follower-growth data is limited to the last ~30 days (Instagram metric cap). Stories aren't retained by the IG API after 24h.</div></footer>
 </div>
@@ -450,20 +450,30 @@ function renderTikTok(cur,prev,acct,W){
   bad.push(['Uneven posting keeps the floor low',`Inconsistent cadence means a low median (${fmt(med)} views). The fix is the floor, not the ceiling.`,`<b>Fix:</b> lock a fixed schedule of retention-optimised videos and let the winners compound.`]);
   $('ttBad').innerHTML=bad.slice(0,5).map(b=>`<div class="inscard bad"><div class="lbl">✕ Fix this</div><h4>${b[0]}</h4><p>${b[1]}</p><div class="fix">${b[2]}</div></div>`).join('');
 
-  // ---- Creative Attribute Analysis (adds Avg Watch + Full%) ----
-  $('ttCaHead').textContent=`· ${C.n} videos · hook & angle inferred from caption · verdict vs period avg of ${fmt(C.avgV)} views`;
-  $('ttCaTbl').innerHTML=`<thead><tr><th>Video &amp; Link</th><th>Hook</th><th>Angle</th><th>Views</th><th>Reach</th><th>Avg Watch</th><th>Watch-Thru</th><th>Full-Watched</th><th>ER%</th><th>New Foll.</th><th>Verdict</th></tr></thead><tbody>`+
-  [...cur].sort((a,b)=>(+b.video_views_count||0)-(+a.video_views_count||0)).map(v=>{const vw=+v.video_views_count||0;const aw=+v.video_average_time_watched||0;const full=ttFull(v);const thru=ttThru(v);const dur=+v.video_duration||0;
-    const verd=vw>=C.avgV*1.15?'<span class="vtag v-over">Overperformer</span>':(vw<=C.avgV*0.6?'<span class="vtag v-under">Underperformer</span>':'<span class="vtag v-mix">On par</span>');
+  // ---- TikTok Content Breakdown (combined, median-benchmarked) ----
+  const medTT=median(cur.map(v=>+v.video_views_count||0));
+  $('ttCbHead').textContent=`· ${C.n} videos · benchmarked vs MEDIAN ${fmt(medTT)} views · hook & angle inferred from caption`;
+  $('ttCbTbl').innerHTML=`<thead><tr><th>#</th><th>Date</th><th>Type</th><th>Link</th><th>Caption</th><th>Hook</th><th>Angle</th><th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>Eng</th><th>ER%</th><th>Retention</th><th>Ret.Rate</th><th>Full-Watched</th><th>New Foll.</th><th>Verdict</th><th>Highlight — why it worked / didn't</th></tr></thead><tbody>`+
+  [...cur].sort((a,b)=>(+b.video_views_count||0)-(+a.video_views_count||0)).map((v,i)=>{const vw=+v.video_views_count||0,aw=+v.video_average_time_watched||0,full=ttFull(v),thru=ttThru(v),dur=+v.video_duration||0,sh=+v.video_shares||0,nf=+v.video_new_followers||0,x=medTT?vw/medTT:0;
     const fcls=full>=8?'v-work':(full>=3?'v-mix':'v-weak');
-    return `<tr><td><a href="${v.video_share_url}" target="_blank">${(v.video_create_datetime||'').slice(5,10)} ↗</a></td><td class="hl">${hookOf(v.video_caption)}</td><td><span class="angtag">${angleOf(v.video_caption)}</span></td><td>${fmt(vw)}</td><td>${fmt(v.video_reach)}</td><td>${aw.toFixed(1)}s</td><td>${dur?thru.toFixed(0)+'%':'—'}</td><td><span class="vtag ${fcls}">${full.toFixed(1)}%</span></td><td>${ttER(v).toFixed(1)}</td><td>${(+v.video_new_followers||0)>0?'+'+(+v.video_new_followers||0):0}</td><td>${verd}</td></tr>`;}).join('')+`</tbody>`;
+    let verd,hl;
+    if(vw>=medTT*3){verd='<span class="vtag v-break">🚀 Breakout</span>';hl=`Breakout — ${fmt(vw)} views, ${x.toFixed(1)}× your median${full>0?`, ${full.toFixed(1)}% full-watched`:''}. Reuse this hook &amp; structure.`;}
+    else if(vw>=medTT*1.25){verd='<span class="vtag v-over">Overperformer</span>';hl=`Above median (${fmt(vw)} views)${full>=8?` and strong ${full.toFixed(1)}% completion`:''}. Replicate.`;}
+    else if(vw<=medTT*0.5){verd='<span class="vtag v-under">Underperformer</span>';hl=`Under-performed (${fmt(vw)} views vs ${fmt(medTT)} median${dur?`, ${thru.toFixed(0)}% watch-through`:''}). Front-load the payoff in the first 2s.`;}
+    else{verd='<span class="vtag v-mix">On par</span>';hl=full>=8?`Around median but ${full.toFixed(1)}% completion is strong — push this topic harder.`:`Around your median (${fmt(vw)} views). Tighten the open to lift watch-through.`;}
+    return `<tr><td>${i+1}</td><td>${(v.video_create_datetime||'').slice(0,10)}</td><td>Video</td><td><a href="${v.video_share_url}" target="_blank">open ↗</a></td><td class="hl">${(v.video_caption||'—').slice(0,40).replace(/\n/g,' ')}</td><td class="hl">${hookOf(v.video_caption)}</td><td><span class="angtag">${angleOf(v.video_caption)}</span></td><td>${fmt(vw)}</td><td>${fmt(v.video_reach)}</td><td>${fmt(v.video_likes)}</td><td>${num(v.video_comments)}</td><td>${num(v.video_favorites)}</td><td>${num(sh)}</td><td>${fmt(ttEng(v))}</td><td>${ttER(v).toFixed(1)}</td><td>${aw.toFixed(1)}s</td><td>${dur?thru.toFixed(0)+'%':'—'}</td><td><span class="vtag ${fcls}">${full.toFixed(1)}%</span></td><td>${nf>0?'+'+nf:nf}</td><td>${verd}</td><td class="hl">${hl}</td></tr>`;}).join('')+`</tbody>`;
 
-  // ---- Full Detail ----
-  const rows=[...cur].sort((a,b)=>new Date(b.video_create_datetime)-new Date(a.video_create_datetime));
-  $('ttTbl').innerHTML=`<thead><tr><th>#</th><th>Date</th><th>Caption</th><th>Dur</th><th>Views</th><th>Reach</th><th>Avg Watch</th><th>Watch-Thru</th><th>Full-Watched</th><th>ER%</th><th>New Foll.</th><th>Link</th></tr></thead><tbody>`+
-  rows.map((v,i)=>{const dur=+v.video_duration||0;const aw=+v.video_average_time_watched||0;const thru=ttThru(v);const full=ttFull(v);const nf=+v.video_new_followers||0;
-    const cls=full>=8?'v-work':(full>=3?'v-mix':'v-weak');
-    return `<tr><td>${i+1}</td><td>${(v.video_create_datetime||'').slice(0,10)}</td><td class="hl">${(v.video_caption||'—').slice(0,50).replace(/\n/g,' ')}</td><td>${dur?dur.toFixed(0)+'s':'—'}</td><td>${fmt(v.video_views_count)}</td><td>${fmt(v.video_reach)}</td><td>${aw.toFixed(1)}s</td><td>${dur?thru.toFixed(0)+'%':'—'}</td><td><span class="vtag ${cls}">${full.toFixed(1)}%</span></td><td>${ttER(v).toFixed(1)}</td><td>${nf>0?'+'+nf:nf}</td><td><a href="${v.video_share_url}" target="_blank">open ↗</a></td></tr>`;}).join('')+`</tbody>`;
+  // ---- TikTok Next 7 Days (retention-led, distinct from IG) ----
+  const ttPlan=[
+    ['Day 1 · Mon','Hook-test: 2 openings, 1 topic','Editing / How-to — fast payoff','"Stop! Ini kesalahan editing yang bikin video lo di-skip"','Talking-head, &lt;20s, payoff di 2 detik pertama'],
+    ['Day 2 · Tue','Micro-tutorial (loopable)','Tips / Framework — one trick','"1 trik CapCut biar transisinya mulus (rewatch-worthy)"','Screen-record, 15–25s, ending nyambung ke awal'],
+    ['Day 3 · Wed','Story-time monetisasi','Monetisation — concrete result','"Cara aku dapet cuan pertama dari konten (no 10k followers)"','Story arc 30–45s, retensi via cliffhanger'],
+    ['Day 4 · Thu','Listicle cepat','Tips / Framework — numbered','"3 tools AI buat creator — yang ke-3 gratis"','On-screen text + b-roll, 20–30s'],
+    ['Day 5 · Fri','POV / relatable','Relatable / POV — share-driver','"POV: lo creator pemula tapi takut mulai"','Trending sound + relatable text, &lt;15s'],
+    ['Day 6 · Sat','Reply-to-comment video','CTA / Lead magnet','"Jawab komen: gimana mulai dari 0? — ini langkahnya"','Reply-sticker format, 25–40s'],
+    ['Day 7 · Sun','Behind-the-scenes + lesson','Personal / Lifestyle with a lesson','"Sehari bikin 10 konten — ini yang gue pelajarin"','Vlog-style, tetap kasih 1 takeaway']
+  ];
+  $('ttPlanGrid').innerHTML=ttPlan.map(p=>`<div class="plancard"><div class="day">${p[0]}</div><h4>${p[1]}</h4><div class="planrow"><span class="k">Angle</span><span>${p[2]}</span></div><div class="planrow"><span class="k">Hook</span><span>${p[3]}</span></div><div class="planrow"><span class="k">Format</span><span class="fmttag">${p[4]}</span></div></div>`).join('');
 }
 
 function sum(a,f){return a.reduce((s,m)=>s+(+f(m)||0),0);}
@@ -562,20 +572,17 @@ function render(cur,prev,follow,totalRow,W){
   bad.push(['Uneven posting keeps the floor low',`Inconsistent cadence means a low median (${fmt(med)} views). Your problem is the floor, not the ceiling.`,`<b>Fix:</b> lock a fixed schedule (e.g. Mon/Wed/Fri) of save-optimised tutorials.`]);
   $('notworking').innerHTML=bad.slice(0,6).map(b=>`<div class="inscard bad"><div class="lbl">✕ Fix this</div><h4>${b[0]}</h4><p>${b[1]}</p><div class="fix">${b[2]}</div></div>`).join('');
 
-  // ---- Creative Attribute Analysis ----
-  $('caHead').textContent=`· ${C.n} posts · hook & angle inferred from each caption · verdict vs period average of ${fmt(C.avgV)} views/post`;
-  $('caTbl').innerHTML=`<thead><tr><th>Content &amp; Link</th><th>Format</th><th>Hook</th><th>Angle</th><th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>ER%</th><th>Retention</th><th>New Foll.</th><th>Verdict</th></tr></thead><tbody>`+
-  [...cur].sort((a,b)=>(+b.media_views||0)-(+a.media_views||0)).map(m=>{const vw=+m.media_views||0;const v=vw>=C.avgV*1.15?'<span class="vtag v-over">Overperformer</span>':(vw<=C.avgV*0.6?'<span class="vtag v-under">Underperformer</span>':'<span class="vtag v-mix">On par</span>');const aw=igWatch(m);
-    return `<tr><td><a href="${m.media_permalink}" target="_blank">${(m.media_permalink||'').split('/').filter(Boolean).pop()} ↗</a></td><td>${tlabel(m)}</td><td class="hl">${hookOf(m.media_caption)}</td><td><span class="angtag">${angleOf(m.media_caption)}</span></td><td>${fmt(vw)}</td><td>${fmt(m.media_reach)}</td><td>${fmt(m.media_like_count)}</td><td>${num(m.media_comments_count)}</td><td>${num(m.media_saved)}</td><td>${num(m.media_shares)}</td><td>${erP(m).toFixed(1)}</td><td>${aw>0?aw.toFixed(1)+'s':'—'}</td><td title="Instagram doesn't attribute new followers to individual posts (account-level only)">—</td><td>${v}</td></tr>`;}).join('')+`</tbody>`;
-
-  // ---- Full detail ----
-  $('detailTbl').innerHTML=`<thead><tr><th>#</th><th>Date</th><th>Type</th><th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>Eng</th><th>ER%</th><th>Retention</th><th>New Foll.</th><th>Link</th><th>Highlight — why it worked / didn't</th></tr></thead><tbody>`+
-  [...cur].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).map((m,i)=>{const vw=+m.media_views||0,sh=+m.media_shares||0,sv=+m.media_saved||0,er=erP(m);const aw=igWatch(m);
-    let tag,hl;
-    if(vw>=C.avgV*1.15){tag='<span class="vtag v-work">Working</span>';hl=`Above-average ${fmt(vw)} views${sh>5?` — ${sh} shares drove reach to ${fmt(m.media_reach)}`:'; hook earned reach beyond followers'}. Replicate.`;}
-    else if(er>=4&&vw<C.avgV){tag='<span class="vtag v-mix">Mixed</span>';hl=`Low reach but high ${er.toFixed(1)}% ER — message landed, needs a stronger hook to scale.`;}
-    else{tag='<span class="vtag v-weak">Weak</span>';hl=`Under-performed (${fmt(vw)} views, ${sh} shares). Add a share/save CTA and a stronger first 3s.`;}
-    return `<tr><td>${i+1}</td><td>${(m.timestamp||'').slice(0,10)}</td><td>${tlabel(m)}</td><td>${fmt(vw)}</td><td>${fmt(m.media_reach)}</td><td>${fmt(m.media_like_count)}</td><td>${num(m.media_comments_count)}</td><td>${num(sv)}</td><td>${num(sh)}</td><td>${fmt(eng(m))}</td><td>${er.toFixed(1)}</td><td>${aw>0?aw.toFixed(1)+'s':'—'}</td><td title="IG doesn't attribute new followers per post (account-level only)">—</td><td><a href="${m.media_permalink}" target="_blank">open ↗</a></td><td class="hl">${tag} ${hl}</td></tr>`;}).join('')+`</tbody>`;
+  // ---- Content Breakdown (combined, median-benchmarked) ----
+  const medV=median(cur.map(m=>+m.media_views||0));
+  $('cbHead').textContent=`· ${C.n} posts · benchmarked vs MEDIAN ${fmt(medV)} views · hook & angle inferred from caption`;
+  $('cbTbl').innerHTML=`<thead><tr><th>#</th><th>Date</th><th>Type</th><th>Link</th><th>Caption</th><th>Hook</th><th>Angle</th><th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>Eng</th><th>ER%</th><th>Retention</th><th>Ret.Rate</th><th>New Foll.</th><th>Verdict</th><th>Highlight — why it worked / didn't</th></tr></thead><tbody>`+
+  [...cur].sort((a,b)=>(+b.media_views||0)-(+a.media_views||0)).map((m,i)=>{const vw=+m.media_views||0,sh=+m.media_shares||0,sv=+m.media_saved||0,er=erP(m),aw=igWatch(m),x=medV?vw/medV:0;
+    let verd,hl;
+    if(vw>=medV*3){verd='<span class="vtag v-break">🚀 Breakout</span>';hl=`Breakout — ${fmt(vw)} views, ${x.toFixed(1)}× your median. ${sh>5?sh+' shares pushed it past your followers. ':''}Study the hook &amp; topic and ship a follow-up.`;}
+    else if(vw>=medV*1.25){verd='<span class="vtag v-over">Overperformer</span>';hl=`Above median (${fmt(vw)} views)${sh>5?` — ${sh} shares drove reach to ${fmt(m.media_reach)}`:'; hook earned reach beyond followers'}. Replicate.`;}
+    else if(vw<=medV*0.5){verd='<span class="vtag v-under">Underperformer</span>';hl=`Under-performed (${fmt(vw)} views vs ${fmt(medV)} median). Stronger first 3s + a share/save CTA.`;}
+    else{verd='<span class="vtag v-mix">On par</span>';hl=er>=4?`Around median but high ${er.toFixed(1)}% ER — message landed, needs a punchier hook to scale.`:`Around your median (${fmt(vw)} views). Solid, not breaking out — sharpen the hook.`;}
+    return `<tr><td>${i+1}</td><td>${(m.timestamp||'').slice(0,10)}</td><td>${tlabel(m)}</td><td><a href="${m.media_permalink}" target="_blank">open ↗</a></td><td class="hl">${(m.media_caption||'—').slice(0,40).replace(/\n/g,' ')}</td><td class="hl">${hookOf(m.media_caption)}</td><td><span class="angtag">${angleOf(m.media_caption)}</span></td><td>${fmt(vw)}</td><td>${fmt(m.media_reach)}</td><td>${fmt(m.media_like_count)}</td><td>${num(m.media_comments_count)}</td><td>${num(sv)}</td><td>${num(sh)}</td><td>${fmt(eng(m))}</td><td>${er.toFixed(1)}</td><td>${aw>0?aw.toFixed(1)+'s':'—'}</td><td title="IG doesn't expose video duration, so watch-through % can't be computed">—</td><td title="IG doesn't attribute new followers per post (account-level only)">—</td><td>${verd}</td><td class="hl">${hl}</td></tr>`;}).join('')+`</tbody>`;
   // ---- IG Retention Ranking (Reels by avg watch time) ----
   const igItems=cur.filter(m=>igWatch(m)>0).map(m=>{const s=igWatch(m);return {val:s,valTxt:s.toFixed(1)+'s',views:+m.media_views||0,link:m.media_permalink,color:s>=10?'#6f8f4e':(s>=6?'#c2872f':'#bd5d33'),label:`${(m.timestamp||'').slice(0,10)} · ${hookOf(m.media_caption)}`};}).sort((a,b)=>b.val-a.val);
   renderRetention('igRet',igItems,'No Reels with watch-time data in this period (carousels/static do not report watch time).');
