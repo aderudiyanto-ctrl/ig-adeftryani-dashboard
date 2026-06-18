@@ -186,7 +186,7 @@ const MEDIA_METRICS=["media_id","media_views","media_reach","media_saved","media
 async function call(params, attempt){
   attempt=attempt||0;
   const qs=new URLSearchParams();
-  qs.set('connector','instagram');
+  qs.set('connector',params.connector||'instagram');
   qs.set('fields',(params.fields||[]).join(','));
   if(params.date_preset) qs.set('date_preset',params.date_preset);
   try{
