@@ -109,6 +109,18 @@ footer{max-width:1240px;margin:40px auto 0;padding:18px 30px 0}
 .spin{width:32px;height:32px;border:3px solid var(--panel2);border-top-color:var(--orange);border-radius:50%;animation:s .8s linear infinite;margin:0 auto 16px}
 @keyframes s{to{transform:rotate(360deg)}}
 .legend{font-size:11.5px;color:var(--mut);margin-top:8px}
+.retwrap{background:#fbf5ea;border:1px solid #ece0c9;border-radius:14px;padding:12px 16px}
+.retrow{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #efe3cd}
+.retrow:last-child{border-bottom:none}
+.retrank{width:22px;height:22px;flex:none;border-radius:50%;background:#eaddc4;color:#7a6a52;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.retmain{flex:1;min-width:0}
+.retlabel{font-size:11.5px;color:#5b4a36;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.rettrack{position:relative;height:18px;background:#f0e6d2;border-radius:5px;overflow:hidden}
+.retfill{position:absolute;left:0;top:0;height:100%;border-radius:5px}
+.retval{position:absolute;right:7px;top:0;line-height:18px;font-size:10.5px;font-weight:700;color:#3f3424}
+.retmeta{flex:none;width:150px;text-align:right;font-size:11px;color:#8c7a62}
+.retmeta a{margin-left:8px;color:var(--orange);font-weight:600;white-space:nowrap}
+@media(max-width:640px){.retmeta{width:104px}.retmeta b{display:block}}
 </style>
 </head>
 <body>
@@ -166,39 +178,41 @@ footer{max-width:1240px;margin:40px auto 0;padding:18px 30px 0}
   <h2 class="sec">Full Detail <span>— posts in period</span></h2>
   <div class="tbl-wrap"><table id="detailTbl"></table></div>
 
+  <h2 class="sec">Retention Ranking <span>— which Reels HOLD attention (avg watch time, sorted)</span></h2>
+  <div class="retwrap" id="igRet"></div>
+  <div class="footnote">Ranked by Instagram's <b>avg watch time per Reel</b> (the closest thing IG gives to TikTok's watch-through). Bar colour: 🟢 ≥10s strong · 🟠 6–10s mid · 🔴 &lt;6s drops fast. Carousels/static excluded (no watch-time). Click "open ↗" to view the Reel.</div>
+
   <h2 class="sec" style="border-top:2px solid #e4d6bf;padding-top:30px;margin-top:34px">📱 TikTok Report — @adeftryani <span>Belajar Bareng Ade · same framework as IG · video-native metrics</span></h2>
   <div id="ttLoad" class="card" style="color:var(--mut);font-size:13px">Memuat data TikTok…</div>
   <div id="ttReport" style="display:none">
 
-    <h2 class="sec" style="font-size:17px">TikTok · Account Overview</h2>
+    <h2 class="sec">TikTok · Account Overview</h2>
     <div class="grid g4" id="ttOv"></div>
 
-    <h2 class="sec" style="font-size:17px" id="ttCpHead">TikTok · Content Performance</h2>
+    <h2 class="sec" id="ttCpHead">TikTok · Content Performance</h2>
     <div class="grid g5" id="ttCp1" style="margin-bottom:14px"></div>
     <div class="grid g4" id="ttCp2"></div>
 
-    <h2 class="sec" style="font-size:17px">TikTok · Views Per Video</h2>
+    <h2 class="sec">TikTok · Views Per Video</h2>
     <div class="chartbox" style="height:300px"><canvas id="ttViewsChart"></canvas></div>
 
-    <h2 class="sec" style="font-size:17px">TikTok · Retention Ranking <span>— which videos HOLD vs DROP attention</span></h2>
-    <div id="ttRetBox" style="background:#fbf5ea;border:1px solid #ece0c9;border-radius:14px;padding:16px 18px;display:none">
-      <div id="ttRetWrap" style="position:relative;height:300px"><canvas id="ttRetChart"></canvas></div>
-      <div class="footnote" style="margin-top:8px">🟢 ≥20% holds well · 🟠 10–20% mid · 🔴 &lt;10% drops fast. Bar = avg watch ÷ durasi. Hover untuk lihat caption &amp; detik.</div>
-    </div>
+    <h2 class="sec">TikTok · Retention Ranking <span>— which videos HOLD vs DROP attention</span></h2>
+    <div class="retwrap" id="ttRet"></div>
+    <div class="footnote">Ranked by <b>watch-through %</b> (avg watch ÷ durasi). Bar colour: 🟢 ≥20% holds well · 🟠 10–20% mid · 🔴 &lt;10% drops fast. Click "open ↗" to view the video.</div>
 
-    <h2 class="sec" style="font-size:17px">TikTok · Top 5 Videos <span>— why they won</span></h2>
+    <h2 class="sec">TikTok · Top 5 Videos <span>— why they won</span></h2>
     <div class="t5" id="ttTop5"></div>
 
-    <h2 class="sec" style="font-size:17px">TikTok · What's Working <span>— reverse-engineer these</span></h2>
+    <h2 class="sec">TikTok · What's Working <span>— reverse-engineer these</span></h2>
     <div class="insgrid" id="ttWork"></div>
 
-    <h2 class="sec" style="font-size:17px">TikTok · What's NOT Working <span>— stop doing these</span></h2>
+    <h2 class="sec">TikTok · What's NOT Working <span>— stop doing these</span></h2>
     <div class="insgrid" id="ttBad"></div>
 
-    <h2 class="sec" style="font-size:17px">TikTok · Creative Attribute Analysis <span id="ttCaHead"></span></h2>
+    <h2 class="sec">TikTok · Creative Attribute Analysis <span id="ttCaHead"></span></h2>
     <div class="tbl-wrap"><table id="ttCaTbl"></table></div>
 
-    <h2 class="sec" style="font-size:17px">TikTok · Full Detail <span>— videos in period</span></h2>
+    <h2 class="sec">TikTok · Full Detail <span>— videos in period</span></h2>
     <div class="tbl-wrap"><table id="ttTbl"></table></div>
     <div class="footnote">Avg watch &amp; duration dalam detik · Watch-through % = avg watch ÷ durasi · Full-watched % = % penonton yang nonton sampai habis · ER = (likes+comments+shares+favorites) ÷ reach · New followers = follower baru dari video itu. Sumber: TikTok via Windsor.ai.</div>
   </div>
@@ -213,7 +227,7 @@ footer{max-width:1240px;margin:40px auto 0;padding:18px 30px 0}
 <script>
 const ACCOUNT="17841400371676002"; // @adeftryani only (a GoWork IG account shares this connector)
 const MEDIA_META=["media_id","account_id","timestamp","media_type","media_product_type","media_caption","media_permalink"];
-const MEDIA_METRICS=["media_id","media_views","media_reach","media_saved","media_shares","media_like_count","media_comments_count"];
+const MEDIA_METRICS=["media_id","media_views","media_reach","media_saved","media_shares","media_like_count","media_comments_count","media_reel_avg_watch_time"];
 
 async function call(params, attempt){
   attempt=attempt||0;
@@ -237,6 +251,7 @@ const num=n=>Math.round(+n||0).toLocaleString('en-US');
 const eng=m=>(+m.media_like_count||0)+(+m.media_comments_count||0)+(+m.media_saved||0)+(+m.media_shares||0);
 const erP=m=>{const r=+m.media_reach||0;return r?eng(m)/r*100:0;};
 const ssRate=m=>{const v=+m.media_views||0;return v?((+m.media_saved||0)+(+m.media_shares||0))/v*1000:0;};
+const igWatch=m=>(+m.media_reel_avg_watch_time||0)/1000; // ms → seconds (Reels only)
 const tlabel=m=>{const t=(m.media_type||'').toUpperCase();if(t==='REELS'||t==='VIDEO')return'Reel';if(t==='CAROUSEL_ALBUM')return'Carousel';if(t==='IMAGE')return'Single Post';if(t==='STORY')return'Story';return t||'—';};
 const dstr=d=>d.toISOString().slice(0,10);
 const median=a=>{if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y);const m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;};
@@ -261,6 +276,15 @@ function angleOf(cap){
   return'Relatable / POV';
 }
 const hookOf=cap=>{let h=(cap||'').split('\n')[0].trim();return h.length>70?h.slice(0,70)+'…':(h||'(no caption)');};
+// Reusable retention-ranking bars: items=[{label,val,valTxt,views,link,color}], sorted desc by val
+function renderRetention(elId,items,emptyMsg){
+  const el=$(elId);if(!el)return;
+  if(!items||!items.length){el.innerHTML=`<div class="footnote" style="margin:0">${emptyMsg||'No retention data in this period.'}</div>`;return;}
+  const max=Math.max(...items.map(i=>i.val))||1;
+  el.innerHTML=items.map((it,i)=>{const w=Math.max(5,it.val/max*100);
+    return `<div class="retrow"><div class="retrank">${i+1}</div><div class="retmain"><div class="retlabel">${it.label}</div><div class="rettrack"><div class="retfill" style="width:${w}%;background:${it.color}"></div><span class="retval">${it.valTxt}</span></div></div><div class="retmeta"><b>${fmt(it.views)} views</b><a href="${it.link}" target="_blank">open ↗</a></div></div>`;
+  }).join('');
+}
 
 // ---- period state ----
 const fromEl=$('from'),toEl=$('to');
@@ -341,7 +365,7 @@ async function loadTikTok(W){
   }catch(e){ $('ttLoad').style.display='block';$('ttLoad').textContent='⚠️ TikTok data tidak bisa dimuat sekarang — coba tap period button lagi.';$('ttReport').style.display='none'; }
 }
 function renderTikTok(cur,prev,acct,W){
-  if(!cur.length){ $('ttLoad').style.display='block';$('ttLoad').textContent='Belum ada video TikTok di periode ini.';$('ttReport').style.display='none'; if(window._ttr)window._ttr.destroy(); if(window._ttv)window._ttv.destroy(); return; }
+  if(!cur.length){ $('ttLoad').style.display='block';$('ttLoad').textContent='Belum ada video TikTok di periode ini.';$('ttReport').style.display='none'; if(window._ttv)window._ttv.destroy(); return; }
   $('ttLoad').style.display='none';$('ttReport').style.display='block';
   const C=ttAgg(cur),P=ttAgg(prev);
 
@@ -384,16 +408,10 @@ function renderTikTok(cur,prev,acct,W){
   if(window._ttv)window._ttv.destroy();
   window._ttv=new Chart($('ttViewsChart'),{type:'bar',data:{labels:sortedV.map(v=>(v.video_create_datetime||'').slice(5,10)),datasets:[{data:sortedV.map(v=>+v.video_views_count||0),backgroundColor:sortedV.map(v=>{const f=ttFull(v);return f>=8?'#6f8f4e':(f>=3?'#c2872f':'#bd5d33');})}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'Views per video (bar colour = full-watched %: 🟢≥8% 🟠3–8% 🔴<3%)',color:'#8c7a62',font:{size:12}}},scales:{x:{ticks:{color:'#8c7a62',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#8c7a62',font:{size:10}},grid:{color:'#e4d6bf'}}}}});
 
-  // ---- Retention ranking ----
+  // ---- Retention ranking (watch-through %, with views + links) ----
   const durV=cur.filter(v=>+v.video_duration>0);
-  const ret=durV.map(v=>({thru:ttThru(v),dur:+v.video_duration||0,aw:+v.video_average_time_watched||0,full:ttFull(v),cap:(v.video_caption||'—').slice(0,42).replace(/\n/g,' '),date:(v.video_create_datetime||'').slice(5,10)})).sort((a,b)=>b.thru-a.thru);
-  if(ret.length){
-    $('ttRetBox').style.display='block';
-    $('ttRetWrap').style.height=Math.max(220,ret.length*30)+'px';
-    const retCol=t=>t>=20?'#6f8f4e':(t>=10?'#c2872f':'#bd5d33');
-    if(window._ttr)window._ttr.destroy();
-    window._ttr=new Chart($('ttRetChart'),{type:'bar',data:{labels:ret.map(r=>r.date+'  '+r.cap),datasets:[{data:ret.map(r=>+r.thru.toFixed(1)),backgroundColor:ret.map(r=>retCol(r.thru))}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const r=ret[c.dataIndex];return [' Watch-through: '+r.thru.toFixed(1)+'%',' Avg watch '+r.aw.toFixed(1)+'s of '+r.dur.toFixed(0)+'s',' Full-watched: '+r.full.toFixed(1)+'%'];}}}},scales:{x:{ticks:{color:'#8c7a62',font:{size:10},callback:v=>v+'%'},grid:{color:'#e4d6bf'},title:{display:true,text:'Watch-through % (higher = holds attention longer)',color:'#8c7a62',font:{size:11}}},y:{ticks:{color:'#5b4a36',font:{size:10}},grid:{display:false}}}}});
-  } else { $('ttRetBox').style.display='none'; if(window._ttr)window._ttr.destroy(); }
+  const ttItems=durV.map(v=>{const t=ttThru(v);return {val:t,valTxt:t.toFixed(0)+'%',views:+v.video_views_count||0,link:v.video_share_url,color:t>=20?'#6f8f4e':(t>=10?'#c2872f':'#bd5d33'),label:`${(v.video_create_datetime||'').slice(0,10)} · ${(v.video_caption||'—').slice(0,50).replace(/\n/g,' ')}`};}).sort((a,b)=>b.val-a.val);
+  renderRetention('ttRet',ttItems,'Belum ada video TikTok dengan data durasi di periode ini.');
 
   // ---- Top 5 (with watch time + full-watched) ----
   const top=[...cur].map(v=>({v,s:((+v.video_shares||0)+(+v.video_favorites||0))*4+(+v.video_comments||0)*2+(+v.video_likes||0)})).sort((a,b)=>b.s-a.s).slice(0,5);
@@ -546,18 +564,21 @@ function render(cur,prev,follow,totalRow,W){
 
   // ---- Creative Attribute Analysis ----
   $('caHead').textContent=`· ${C.n} posts · hook & angle inferred from each caption · verdict vs period average of ${fmt(C.avgV)} views/post`;
-  $('caTbl').innerHTML=`<thead><tr><th>Content &amp; Link</th><th>Format</th><th>Hook</th><th>Angle</th><th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>ER%</th><th>Verdict</th></tr></thead><tbody>`+
-  [...cur].sort((a,b)=>(+b.media_views||0)-(+a.media_views||0)).map(m=>{const vw=+m.media_views||0;const v=vw>=C.avgV*1.15?'<span class="vtag v-over">Overperformer</span>':(vw<=C.avgV*0.6?'<span class="vtag v-under">Underperformer</span>':'<span class="vtag v-mix">On par</span>');
-    return `<tr><td><a href="${m.media_permalink}" target="_blank">${(m.media_permalink||'').split('/').filter(Boolean).pop()} ↗</a></td><td>${tlabel(m)}</td><td class="hl">${hookOf(m.media_caption)}</td><td><span class="angtag">${angleOf(m.media_caption)}</span></td><td>${fmt(vw)}</td><td>${fmt(m.media_reach)}</td><td>${fmt(m.media_like_count)}</td><td>${num(m.media_comments_count)}</td><td>${num(m.media_saved)}</td><td>${num(m.media_shares)}</td><td>${erP(m).toFixed(1)}</td><td>${v}</td></tr>`;}).join('')+`</tbody>`;
+  $('caTbl').innerHTML=`<thead><tr><th>Content &amp; Link</th><th>Format</th><th>Hook</th><th>Angle</th><th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>ER%</th><th>Retention</th><th>New Foll.</th><th>Verdict</th></tr></thead><tbody>`+
+  [...cur].sort((a,b)=>(+b.media_views||0)-(+a.media_views||0)).map(m=>{const vw=+m.media_views||0;const v=vw>=C.avgV*1.15?'<span class="vtag v-over">Overperformer</span>':(vw<=C.avgV*0.6?'<span class="vtag v-under">Underperformer</span>':'<span class="vtag v-mix">On par</span>');const aw=igWatch(m);
+    return `<tr><td><a href="${m.media_permalink}" target="_blank">${(m.media_permalink||'').split('/').filter(Boolean).pop()} ↗</a></td><td>${tlabel(m)}</td><td class="hl">${hookOf(m.media_caption)}</td><td><span class="angtag">${angleOf(m.media_caption)}</span></td><td>${fmt(vw)}</td><td>${fmt(m.media_reach)}</td><td>${fmt(m.media_like_count)}</td><td>${num(m.media_comments_count)}</td><td>${num(m.media_saved)}</td><td>${num(m.media_shares)}</td><td>${erP(m).toFixed(1)}</td><td>${aw>0?aw.toFixed(1)+'s':'—'}</td><td title="Instagram doesn't attribute new followers to individual posts (account-level only)">—</td><td>${v}</td></tr>`;}).join('')+`</tbody>`;
 
   // ---- Full detail ----
-  $('detailTbl').innerHTML=`<thead><tr><th>#</th><th>Date</th><th>Type</th><th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>Eng</th><th>ER%</th><th>Link</th><th>Highlight — why it worked / didn't</th></tr></thead><tbody>`+
-  [...cur].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).map((m,i)=>{const vw=+m.media_views||0,sh=+m.media_shares||0,sv=+m.media_saved||0,er=erP(m);
+  $('detailTbl').innerHTML=`<thead><tr><th>#</th><th>Date</th><th>Type</th><th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>Eng</th><th>ER%</th><th>Retention</th><th>New Foll.</th><th>Link</th><th>Highlight — why it worked / didn't</th></tr></thead><tbody>`+
+  [...cur].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).map((m,i)=>{const vw=+m.media_views||0,sh=+m.media_shares||0,sv=+m.media_saved||0,er=erP(m);const aw=igWatch(m);
     let tag,hl;
     if(vw>=C.avgV*1.15){tag='<span class="vtag v-work">Working</span>';hl=`Above-average ${fmt(vw)} views${sh>5?` — ${sh} shares drove reach to ${fmt(m.media_reach)}`:'; hook earned reach beyond followers'}. Replicate.`;}
     else if(er>=4&&vw<C.avgV){tag='<span class="vtag v-mix">Mixed</span>';hl=`Low reach but high ${er.toFixed(1)}% ER — message landed, needs a stronger hook to scale.`;}
     else{tag='<span class="vtag v-weak">Weak</span>';hl=`Under-performed (${fmt(vw)} views, ${sh} shares). Add a share/save CTA and a stronger first 3s.`;}
-    return `<tr><td>${i+1}</td><td>${(m.timestamp||'').slice(0,10)}</td><td>${tlabel(m)}</td><td>${fmt(vw)}</td><td>${fmt(m.media_reach)}</td><td>${fmt(m.media_like_count)}</td><td>${num(m.media_comments_count)}</td><td>${num(sv)}</td><td>${num(sh)}</td><td>${fmt(eng(m))}</td><td>${er.toFixed(1)}</td><td><a href="${m.media_permalink}" target="_blank">open ↗</a></td><td class="hl">${tag} ${hl}</td></tr>`;}).join('')+`</tbody>`;
+    return `<tr><td>${i+1}</td><td>${(m.timestamp||'').slice(0,10)}</td><td>${tlabel(m)}</td><td>${fmt(vw)}</td><td>${fmt(m.media_reach)}</td><td>${fmt(m.media_like_count)}</td><td>${num(m.media_comments_count)}</td><td>${num(sv)}</td><td>${num(sh)}</td><td>${fmt(eng(m))}</td><td>${er.toFixed(1)}</td><td>${aw>0?aw.toFixed(1)+'s':'—'}</td><td title="IG doesn't attribute new followers per post (account-level only)">—</td><td><a href="${m.media_permalink}" target="_blank">open ↗</a></td><td class="hl">${tag} ${hl}</td></tr>`;}).join('')+`</tbody>`;
+  // ---- IG Retention Ranking (Reels by avg watch time) ----
+  const igItems=cur.filter(m=>igWatch(m)>0).map(m=>{const s=igWatch(m);return {val:s,valTxt:s.toFixed(1)+'s',views:+m.media_views||0,link:m.media_permalink,color:s>=10?'#6f8f4e':(s>=6?'#c2872f':'#bd5d33'),label:`${(m.timestamp||'').slice(0,10)} · ${hookOf(m.media_caption)}`};}).sort((a,b)=>b.val-a.val);
+  renderRetention('igRet',igItems,'No Reels with watch-time data in this period (carousels/static do not report watch time).');
 
   // ---- Next 7 days plan (niche-tuned template) ----
   const plan=[
