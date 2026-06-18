@@ -4,7 +4,7 @@ export default async function handler(req, res) {
           res.status(500).json({ error: "WINDSOR_API_KEY environment variable is not set in Vercel." });
           return;
     }
-    const ALLOWED = new Set(["instagram"]);
+    const ALLOWED = new Set(["instagram", "tiktok_organic"]);
     const connector = (req.query.connector || "instagram").toString();
     if (!ALLOWED.has(connector)) {
           res.status(400).json({ error: "Connector not allowed." });
