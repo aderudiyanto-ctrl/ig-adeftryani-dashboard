@@ -166,6 +166,11 @@ footer{max-width:1240px;margin:40px auto 0;padding:18px 30px 0}
   <h2 class="sec">Full Detail <span>— posts in period</span></h2>
   <div class="tbl-wrap"><table id="detailTbl"></table></div>
 
+  <h2 class="sec">📱 TikTok — Watch-Through &amp; Retention <span>per video · the metrics IG doesn't give you</span></h2>
+  <div class="grid" id="ttKpis" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))"><div class="card" style="grid-column:1/-1;color:var(--mut);font-size:13px">Memuat data TikTok…</div></div>
+  <div class="tbl-wrap" style="margin-top:14px"><table id="ttTbl"></table></div>
+  <div class="footnote">Avg watch &amp; duration dalam detik · Watch-through % = avg watch ÷ durasi · Full-watched % = penonton yang nonton sampai habis · New followers = follower baru dari video itu. Sumber: TikTok via Windsor.ai.</div>
+
   <h2 class="sec">Next 7 Days <span>— content plan</span></h2>
   <div class="planhead">Built from this period's performance and your niche (content &amp; monetisation). Each card gives the topic, angle, hook and format to brief yourself or an editor.</div>
   <div class="plangrid" id="planGrid"></div>
@@ -267,10 +272,46 @@ async function load(){
     const prev=all.filter(m=>inRange(m,W.ps,W.pe));
     render(cur,prev,follow,totalRow,W);
     $('loading').style.display='none';$('dash').style.display='block';
+    loadTikTok(W);
   }catch(e){
     $('loading').style.display='none';const el=$('error');el.style.display='block';
     el.innerHTML='⚠️ Could not load data right now. Please tap a period button again — the data source may be briefly busy.';
   }
+}
+
+const TT_FIELDS=["video_id","video_create_datetime","video_caption","video_duration","video_views_count","video_reach","video_average_time_watched","video_full_watched_rate","video_new_followers","video_share_url"];
+async function loadTikTok(W){
+  $('ttKpis').innerHTML='<div class="card" style="grid-column:1/-1;color:var(--mut);font-size:13px">Memuat data TikTok…</div>';$('ttTbl').innerHTML='';
+  try{
+    const vids=await call({connector:'tiktok_organic',fields:TT_FIELDS,date_preset:coverPreset(W.cs)});
+    const inP=vids.filter(v=>{const d=(v.video_create_datetime||'').slice(0,10);return d>=W.cs&&d<=W.ce;});
+    renderTikTok(inP);
+  }catch(e){ $('ttKpis').innerHTML='<div class="card" style="grid-column:1/-1;color:var(--mut);font-size:13px">⚠️ TikTok data tidak bisa dimuat sekarang — coba lagi sebentar.</div>'; $('ttTbl').innerHTML=''; }
+}
+function renderTikTok(vids){
+  if(!vids.length){ $('ttKpis').innerHTML='<div class="card" style="grid-column:1/-1;color:var(--mut);font-size:13px">Belum ada video TikTok di periode ini.</div>'; $('ttTbl').innerHTML=''; return; }
+  const n=vids.length;
+  const sum=f=>vids.reduce((s,v)=>s+(+v[f]||0),0);
+  const durV=vids.filter(v=>+v.video_duration>0);
+  const avgWatch=sum('video_average_time_watched')/n;
+  const avgFull=sum('video_full_watched_rate')/n*100;
+  const newF=sum('video_new_followers');
+  const avgDur=durV.length?durV.reduce((s,v)=>s+(+v.video_duration||0),0)/durV.length:0;
+  const avgThru=durV.length?durV.reduce((s,v)=>s+((+v.video_average_time_watched||0)/(+v.video_duration||1)),0)/durV.length*100:0;
+  const k=[
+    {lab:'Videos posted',val:num(n),sub:'in this period'},
+    {lab:'Avg Watch Time',val:avgWatch.toFixed(1)+'s',sub:'across videos'},
+    {lab:'Avg Watch-Through',val:avgThru.toFixed(0)+'%',sub:'watch ÷ duration'},
+    {lab:'Avg Full-Watched',val:avgFull.toFixed(1)+'%',sub:'finished the whole video'},
+    {lab:'New Followers',val:fmt(newF),sub:'gained from these videos'},
+    {lab:'Avg Duration',val:avgDur.toFixed(0)+'s',sub:'video length'}
+  ];
+  $('ttKpis').innerHTML=k.map(x=>`<div class="card kpi"><div class="lab">${x.lab}</div><div class="val">${x.val}</div><div class="sub">${x.sub}</div></div>`).join('');
+  const rows=[...vids].sort((a,b)=>(+b.video_views_count||0)-(+a.video_views_count||0));
+  $('ttTbl').innerHTML=`<thead><tr><th>#</th><th>Date</th><th>Caption</th><th>Dur</th><th>Views</th><th>Reach</th><th>Avg Watch</th><th>Watch-Thru</th><th>Full-Watched</th><th>New Foll.</th><th>Link</th></tr></thead><tbody>`+
+  rows.map((v,i)=>{const dur=+v.video_duration||0;const aw=+v.video_average_time_watched||0;const thru=dur?aw/dur*100:0;const full=(+v.video_full_watched_rate||0)*100;const nf=+v.video_new_followers||0;
+    const cls=full>=8?'v-work':(full>=3?'v-mix':'v-weak');
+    return `<tr><td>${i+1}</td><td>${(v.video_create_datetime||'').slice(0,10)}</td><td class="hl">${(v.video_caption||'—').slice(0,55).replace(/\n/g,' ')}</td><td>${dur?dur.toFixed(0)+'s':'—'}</td><td>${fmt(v.video_views_count)}</td><td>${fmt(v.video_reach)}</td><td>${aw.toFixed(1)}s</td><td>${dur?thru.toFixed(0)+'%':'—'}</td><td><span class="vtag ${cls}">${full.toFixed(1)}%</span></td><td>${nf>0?'+'+nf:nf}</td><td><a href="${v.video_share_url}" target="_blank">open ↗</a></td></tr>`;}).join('')+`</tbody>`;
 }
 
 function sum(a,f){return a.reduce((s,m)=>s+(+f(m)||0),0);}
