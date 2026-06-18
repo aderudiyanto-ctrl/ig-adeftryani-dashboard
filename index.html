@@ -166,21 +166,48 @@ footer{max-width:1240px;margin:40px auto 0;padding:18px 30px 0}
   <h2 class="sec">Full Detail <span>— posts in period</span></h2>
   <div class="tbl-wrap"><table id="detailTbl"></table></div>
 
-  <h2 class="sec">📱 TikTok — Watch-Through &amp; Retention <span>per video · the metrics IG doesn't give you</span></h2>
-  <div class="grid" id="ttKpis" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))"><div class="card" style="grid-column:1/-1;color:var(--mut);font-size:13px">Memuat data TikTok…</div></div>
-  <div id="ttRetBox" style="margin-top:16px;background:#fbf5ea;border:1px solid #ece0c9;border-radius:14px;padding:16px 18px;display:none">
-    <div style="font-size:13px;color:#8c7a62;font-weight:600;margin-bottom:10px">Retention ranking — which videos HOLD vs DROP attention (watch-through %, sorted)</div>
-    <div id="ttRetWrap" style="position:relative;height:300px"><canvas id="ttRetChart"></canvas></div>
-    <div class="footnote" style="margin-top:8px">🟢 ≥20% holds well · 🟠 10–20% mid · 🔴 &lt;10% drops fast. Bar = avg watch ÷ durasi. Hover untuk lihat caption &amp; detik.</div>
+  <h2 class="sec" style="border-top:2px solid #e4d6bf;padding-top:30px;margin-top:34px">📱 TikTok Report — @adeftryani <span>Belajar Bareng Ade · same framework as IG · video-native metrics</span></h2>
+  <div id="ttLoad" class="card" style="color:var(--mut);font-size:13px">Memuat data TikTok…</div>
+  <div id="ttReport" style="display:none">
+
+    <h2 class="sec" style="font-size:17px">TikTok · Account Overview</h2>
+    <div class="grid g4" id="ttOv"></div>
+
+    <h2 class="sec" style="font-size:17px" id="ttCpHead">TikTok · Content Performance</h2>
+    <div class="grid g5" id="ttCp1" style="margin-bottom:14px"></div>
+    <div class="grid g4" id="ttCp2"></div>
+
+    <h2 class="sec" style="font-size:17px">TikTok · Views Per Video</h2>
+    <div class="chartbox" style="height:300px"><canvas id="ttViewsChart"></canvas></div>
+
+    <h2 class="sec" style="font-size:17px">TikTok · Retention Ranking <span>— which videos HOLD vs DROP attention</span></h2>
+    <div id="ttRetBox" style="background:#fbf5ea;border:1px solid #ece0c9;border-radius:14px;padding:16px 18px;display:none">
+      <div id="ttRetWrap" style="position:relative;height:300px"><canvas id="ttRetChart"></canvas></div>
+      <div class="footnote" style="margin-top:8px">🟢 ≥20% holds well · 🟠 10–20% mid · 🔴 &lt;10% drops fast. Bar = avg watch ÷ durasi. Hover untuk lihat caption &amp; detik.</div>
+    </div>
+
+    <h2 class="sec" style="font-size:17px">TikTok · Top 5 Videos <span>— why they won</span></h2>
+    <div class="t5" id="ttTop5"></div>
+
+    <h2 class="sec" style="font-size:17px">TikTok · What's Working <span>— reverse-engineer these</span></h2>
+    <div class="insgrid" id="ttWork"></div>
+
+    <h2 class="sec" style="font-size:17px">TikTok · What's NOT Working <span>— stop doing these</span></h2>
+    <div class="insgrid" id="ttBad"></div>
+
+    <h2 class="sec" style="font-size:17px">TikTok · Creative Attribute Analysis <span id="ttCaHead"></span></h2>
+    <div class="tbl-wrap"><table id="ttCaTbl"></table></div>
+
+    <h2 class="sec" style="font-size:17px">TikTok · Full Detail <span>— videos in period</span></h2>
+    <div class="tbl-wrap"><table id="ttTbl"></table></div>
+    <div class="footnote">Avg watch &amp; duration dalam detik · Watch-through % = avg watch ÷ durasi · Full-watched % = % penonton yang nonton sampai habis · ER = (likes+comments+shares+favorites) ÷ reach · New followers = follower baru dari video itu. Sumber: TikTok via Windsor.ai.</div>
   </div>
-  <div class="tbl-wrap" style="margin-top:14px"><table id="ttTbl"></table></div>
-  <div class="footnote">Avg watch &amp; duration dalam detik · Watch-through % = avg watch ÷ durasi · Full-watched % = penonton yang nonton sampai habis · New followers = follower baru dari video itu. Sumber: TikTok via Windsor.ai.</div>
 
   <h2 class="sec">Next 7 Days <span>— content plan</span></h2>
   <div class="planhead">Built from this period's performance and your niche (content &amp; monetisation). Each card gives the topic, angle, hook and format to brief yourself or an editor.</div>
   <div class="plangrid" id="planGrid"></div>
 
-  <footer><div class="foot"><b>Live dashboard.</b> Every metric is pulled fresh from Windsor.ai → Instagram on each load and compared against the previous equal-length period. Use the buttons above for Today / 7 / 14 / 30 days or a custom range. <br>Engagement rate = (likes + comments + saves + shares) ÷ reach. Follower-growth data is limited to the last ~30 days (Instagram metric cap). Stories aren't retained by the IG API after 24h.</div></footer>
+  <footer><div class="foot"><b>Live dashboard.</b> Every metric is pulled fresh from Windsor.ai → Instagram &amp; TikTok on each load and compared against the previous equal-length period. Use the buttons above for Today / 7 / 14 / 30 days or a custom range. <br>Engagement rate = (likes + comments + saves + shares) ÷ reach. Follower-growth data is limited to the last ~30 days (Instagram metric cap). Stories aren't retained by the IG API after 24h.</div></footer>
 </div>
 
 <script>
@@ -284,36 +311,82 @@ async function load(){
   }
 }
 
-const TT_FIELDS=["video_id","video_create_datetime","video_caption","video_duration","video_views_count","video_reach","video_average_time_watched","video_full_watched_rate","video_new_followers","video_share_url"];
+const TT_FIELDS=["video_id","video_create_datetime","video_caption","video_duration","video_views_count","video_reach","video_likes","video_comments","video_shares","video_favorites","video_average_time_watched","video_full_watched_rate","video_new_followers","video_share_url"];
+const TT_ACCT=["date","total_followers_count","profile_views","engaged_audience"];
+const ttThru=v=>{const d=+v.video_duration||0;return d?(+v.video_average_time_watched||0)/d*100:0;};
+const ttFull=v=>(+v.video_full_watched_rate||0)*100;
+const ttEng=v=>(+v.video_likes||0)+(+v.video_comments||0)+(+v.video_shares||0)+(+v.video_favorites||0);
+const ttER=v=>{const r=+v.video_reach||0;return r?ttEng(v)/r*100:0;};
+function ttAgg(a){const tsum=f=>a.reduce((s,v)=>s+(+v[f]||0),0);const n=a.length;const durV=a.filter(v=>+v.video_duration>0);
+  const eng=tsum('video_likes')+tsum('video_comments')+tsum('video_shares')+tsum('video_favorites');
+  const reach=tsum('video_reach');const views=tsum('video_views_count');
+  return {n,views,reach,eng,likes:tsum('video_likes'),cmts:tsum('video_comments'),shares:tsum('video_shares'),favs:tsum('video_favorites'),newF:tsum('video_new_followers'),
+    avgV:n?views/n:0,avgER:reach?eng/reach*100:0,
+    avgWatch:n?tsum('video_average_time_watched')/n:0,
+    avgFull:n?tsum('video_full_watched_rate')/n*100:0,
+    avgDur:durV.length?durV.reduce((s,v)=>s+(+v.video_duration||0),0)/durV.length:0,
+    avgThru:durV.length?durV.reduce((s,v)=>s+ttThru(v),0)/durV.length:0};}
+
 async function loadTikTok(W){
-  $('ttKpis').innerHTML='<div class="card" style="grid-column:1/-1;color:var(--mut);font-size:13px">Memuat data TikTok…</div>';$('ttTbl').innerHTML='';
+  $('ttLoad').style.display='block';$('ttLoad').textContent='Memuat data TikTok…';$('ttReport').style.display='none';
   try{
-    const vids=await call({connector:'tiktok_organic',fields:TT_FIELDS,date_preset:coverPreset(W.cs)});
-    const inP=vids.filter(v=>{const d=(v.video_create_datetime||'').slice(0,10);return d>=W.cs&&d<=W.ce;});
-    renderTikTok(inP);
-  }catch(e){ $('ttKpis').innerHTML='<div class="card" style="grid-column:1/-1;color:var(--mut);font-size:13px">⚠️ TikTok data tidak bisa dimuat sekarang — coba lagi sebentar.</div>'; $('ttTbl').innerHTML=''; }
+    const [vids,acct]=await Promise.all([
+      call({connector:'tiktok_organic',fields:TT_FIELDS,date_preset:coverPreset(W.ps)}),
+      call({connector:'tiktok_organic',fields:TT_ACCT,date_preset:coverPreset(W.ps)})
+    ]);
+    const inR=(v,a,b)=>{const d=(v.video_create_datetime||'').slice(0,10);return d>=a&&d<=b;};
+    const cur=vids.filter(v=>inR(v,W.cs,W.ce));
+    const prev=vids.filter(v=>inR(v,W.ps,W.pe));
+    renderTikTok(cur,prev,acct,W);
+  }catch(e){ $('ttLoad').style.display='block';$('ttLoad').textContent='⚠️ TikTok data tidak bisa dimuat sekarang — coba tap period button lagi.';$('ttReport').style.display='none'; }
 }
-function renderTikTok(vids){
-  if(!vids.length){ $('ttKpis').innerHTML='<div class="card" style="grid-column:1/-1;color:var(--mut);font-size:13px">Belum ada video TikTok di periode ini.</div>'; $('ttTbl').innerHTML=''; $('ttRetBox').style.display='none'; if(window._ttr)window._ttr.destroy(); return; }
-  const n=vids.length;
-  const sum=f=>vids.reduce((s,v)=>s+(+v[f]||0),0);
-  const durV=vids.filter(v=>+v.video_duration>0);
-  const avgWatch=sum('video_average_time_watched')/n;
-  const avgFull=sum('video_full_watched_rate')/n*100;
-  const newF=sum('video_new_followers');
-  const avgDur=durV.length?durV.reduce((s,v)=>s+(+v.video_duration||0),0)/durV.length:0;
-  const avgThru=durV.length?durV.reduce((s,v)=>s+((+v.video_average_time_watched||0)/(+v.video_duration||1)),0)/durV.length*100:0;
-  const k=[
-    {lab:'Videos posted',val:num(n),sub:'in this period'},
-    {lab:'Avg Watch Time',val:avgWatch.toFixed(1)+'s',sub:'across videos'},
-    {lab:'Avg Watch-Through',val:avgThru.toFixed(0)+'%',sub:'watch ÷ duration'},
-    {lab:'Avg Full-Watched',val:avgFull.toFixed(1)+'%',sub:'finished the whole video'},
-    {lab:'New Followers',val:fmt(newF),sub:'gained from these videos'},
-    {lab:'Avg Duration',val:avgDur.toFixed(0)+'s',sub:'video length'}
+function renderTikTok(cur,prev,acct,W){
+  if(!cur.length){ $('ttLoad').style.display='block';$('ttLoad').textContent='Belum ada video TikTok di periode ini.';$('ttReport').style.display='none'; if(window._ttr)window._ttr.destroy(); if(window._ttv)window._ttv.destroy(); return; }
+  $('ttLoad').style.display='none';$('ttReport').style.display='block';
+  const C=ttAgg(cur),P=ttAgg(prev);
+
+  // ---- Account Overview (followers from account table) ----
+  const accIn=(acct||[]).filter(r=>{const d=(r.date||'').slice(0,10);return d>=W.cs&&d<=W.ce;});
+  const totSeries=accIn.map(r=>+r.total_followers_count||0).filter(x=>x>0);
+  let curTotal=0;(acct||[]).forEach(r=>{const t=+r.total_followers_count||0;if(t>0)curTotal=t;});
+  const fGrowth=totSeries.length>=2?totSeries[totSeries.length-1]-totSeries[0]:0;
+  const profViews=accIn.reduce((s,r)=>s+(+r.profile_views||0),0);
+  const ov=[
+    {lab:'Total Followers',val:fmt(curTotal),sub:'current account total',bar:'var(--orange)',pct:100},
+    {lab:'Follower Growth',val:(fGrowth>=0?'+':'')+fmt(fGrowth),sub:`net change across period (${totSeries.length}d data)`,bar:'var(--green)',pct:70},
+    {lab:'Profile Views',val:fmt(profViews),sub:'profile visits in period',bar:'var(--olive)',pct:60},
+    {lab:'Videos Posted',val:num(C.n),sub:`avg ${C.avgDur.toFixed(0)}s long`,bar:'var(--amber)',pct:Math.min(100,C.n/Math.max(C.n,P.n,1)*100)},
+    {lab:'Avg Watch Time',val:C.avgWatch.toFixed(1)+'s',sub:'retention · '+delta(C.avgWatch,P.avgWatch,true).html,bar:'var(--orange)',pct:Math.min(100,C.avgWatch/Math.max(C.avgWatch,P.avgWatch,1)*100)},
+    {lab:'Avg Full-Watched',val:C.avgFull.toFixed(1)+'%',sub:'finished whole video · '+delta(C.avgFull,P.avgFull,true).html,bar:'var(--green)',pct:Math.min(100,C.avgFull/Math.max(C.avgFull,P.avgFull,1)*100)}
   ];
-  $('ttKpis').innerHTML=k.map(x=>`<div class="card kpi"><div class="lab">${x.lab}</div><div class="val">${x.val}</div><div class="sub">${x.sub}</div></div>`).join('');
-  // ---- retention ranking chart ----
-  const ret=durV.map(v=>{const dur=+v.video_duration||0;const aw=+v.video_average_time_watched||0;return {thru:dur?aw/dur*100:0,dur,aw,full:(+v.video_full_watched_rate||0)*100,cap:(v.video_caption||'—').slice(0,42).replace(/\n/g,' '),date:(v.video_create_datetime||'').slice(5,10)};}).sort((a,b)=>b.thru-a.thru);
+  $('ttOv').innerHTML=ov.map(c=>`<div class="card kpi"><div class="lab">${c.lab}</div><div class="val">${c.val}</div><div class="sub">${c.sub}</div><div class="pbar"><i style="width:${c.pct}%;background:${c.bar}"></i></div></div>`).join('');
+
+  // ---- Content Performance (watch time + full-watched included) ----
+  $('ttCpHead').innerHTML=`TikTok · Content Performance <span>· ${C.n} videos in period</span>`;
+  const cp1=[
+    {lab:'Total Views',val:fmt(C.views),sub:'across videos posted',chg:delta(C.views,P.views,true).html},
+    {lab:'Avg Views / Video',val:fmt(C.avgV),sub:'mean per video',chg:delta(C.avgV,P.avgV,true).html},
+    {lab:'Avg Engagement Rate',val:C.avgER.toFixed(2)+'%',sub:'(likes+cmts+shares+favs) ÷ reach',chg:delta(C.avgER,P.avgER,true).html},
+    {lab:'Avg Watch Time',val:C.avgWatch.toFixed(1)+'s',sub:'retention per video',chg:delta(C.avgWatch,P.avgWatch,true).html},
+    {lab:'Avg Full-Watched',val:C.avgFull.toFixed(1)+'%',sub:'finished the whole video',chg:delta(C.avgFull,P.avgFull,true).html}
+  ];
+  $('ttCp1').innerHTML=cp1.map(c=>`<div class="card kpi"><div class="lab">${c.lab}</div><div class="val">${c.val}</div><div class="sub">${c.sub}</div><div class="chg">${c.chg}</div></div>`).join('');
+  const cp2=[
+    {lab:'Avg Watch-Through',val:C.avgThru.toFixed(0)+'%',sub:'watch ÷ duration',chg:delta(C.avgThru,P.avgThru,true).html},
+    {lab:'New Followers',val:(C.newF>=0?'+':'')+fmt(C.newF),sub:'gained from these videos',chg:delta(C.newF,P.newF,true).html},
+    {lab:'Shares',val:fmt(C.shares),sub:'your #1 growth lever',chg:delta(C.shares,P.shares,true).html},
+    {lab:'Saves (Favorites)',val:fmt(C.favs),sub:'reference-worthy signal',chg:delta(C.favs,P.favs,true).html}
+  ];
+  $('ttCp2').innerHTML=cp2.map(c=>`<div class="card kpi"><div class="lab">${c.lab}</div><div class="val">${c.val}</div><div class="sub">${c.sub}</div><div class="chg">${c.chg}</div></div>`).join('');
+
+  // ---- Views per video chart ----
+  const sortedV=[...cur].sort((a,b)=>(+b.video_views_count||0)-(+a.video_views_count||0));
+  if(window._ttv)window._ttv.destroy();
+  window._ttv=new Chart($('ttViewsChart'),{type:'bar',data:{labels:sortedV.map(v=>(v.video_create_datetime||'').slice(5,10)),datasets:[{data:sortedV.map(v=>+v.video_views_count||0),backgroundColor:sortedV.map(v=>{const f=ttFull(v);return f>=8?'#6f8f4e':(f>=3?'#c2872f':'#bd5d33');})}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'Views per video (bar colour = full-watched %: 🟢≥8% 🟠3–8% 🔴<3%)',color:'#8c7a62',font:{size:12}}},scales:{x:{ticks:{color:'#8c7a62',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#8c7a62',font:{size:10}},grid:{color:'#e4d6bf'}}}}});
+
+  // ---- Retention ranking ----
+  const durV=cur.filter(v=>+v.video_duration>0);
+  const ret=durV.map(v=>({thru:ttThru(v),dur:+v.video_duration||0,aw:+v.video_average_time_watched||0,full:ttFull(v),cap:(v.video_caption||'—').slice(0,42).replace(/\n/g,' '),date:(v.video_create_datetime||'').slice(5,10)})).sort((a,b)=>b.thru-a.thru);
   if(ret.length){
     $('ttRetBox').style.display='block';
     $('ttRetWrap').style.height=Math.max(220,ret.length*30)+'px';
@@ -321,11 +394,58 @@ function renderTikTok(vids){
     if(window._ttr)window._ttr.destroy();
     window._ttr=new Chart($('ttRetChart'),{type:'bar',data:{labels:ret.map(r=>r.date+'  '+r.cap),datasets:[{data:ret.map(r=>+r.thru.toFixed(1)),backgroundColor:ret.map(r=>retCol(r.thru))}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const r=ret[c.dataIndex];return [' Watch-through: '+r.thru.toFixed(1)+'%',' Avg watch '+r.aw.toFixed(1)+'s of '+r.dur.toFixed(0)+'s',' Full-watched: '+r.full.toFixed(1)+'%'];}}}},scales:{x:{ticks:{color:'#8c7a62',font:{size:10},callback:v=>v+'%'},grid:{color:'#e4d6bf'},title:{display:true,text:'Watch-through % (higher = holds attention longer)',color:'#8c7a62',font:{size:11}}},y:{ticks:{color:'#5b4a36',font:{size:10}},grid:{display:false}}}}});
   } else { $('ttRetBox').style.display='none'; if(window._ttr)window._ttr.destroy(); }
-  const rows=[...vids].sort((a,b)=>(+b.video_views_count||0)-(+a.video_views_count||0));
-  $('ttTbl').innerHTML=`<thead><tr><th>#</th><th>Date</th><th>Caption</th><th>Dur</th><th>Views</th><th>Reach</th><th>Avg Watch</th><th>Watch-Thru</th><th>Full-Watched</th><th>New Foll.</th><th>Link</th></tr></thead><tbody>`+
-  rows.map((v,i)=>{const dur=+v.video_duration||0;const aw=+v.video_average_time_watched||0;const thru=dur?aw/dur*100:0;const full=(+v.video_full_watched_rate||0)*100;const nf=+v.video_new_followers||0;
+
+  // ---- Top 5 (with watch time + full-watched) ----
+  const top=[...cur].map(v=>({v,s:((+v.video_shares||0)+(+v.video_favorites||0))*4+(+v.video_comments||0)*2+(+v.video_likes||0)})).sort((a,b)=>b.s-a.s).slice(0,5);
+  $('ttTop5').innerHTML=top.map((x,i)=>{const v=x.v,thru=ttThru(v),full=ttFull(v),er=ttER(v),aw=+v.video_average_time_watched||0;
+    const sh=+v.video_shares||0,fav=+v.video_favorites||0,vw=+v.video_views_count||0,cm=+v.video_comments||0,nf=+v.video_new_followers||0;
+    let why;
+    if(i===0)why=`<b>Top video</b> of the period — ${fmt(vw)} views on ${fmt(v.video_reach)} reach, held ${aw.toFixed(1)}s avg (${thru.toFixed(0)}% watch-through, ${full.toFixed(1)}% full-watched). This retention is the template.`;
+    else if(full>=8)why=`<b>Retention winner.</b> ${full.toFixed(1)}% watched the whole thing — well above your average. The pacing/hook holds; reuse this structure.`;
+    else if(sh>=8)why=`<b>Share-driven reach.</b> ${sh} shares pushed it past your followers — shares are TikTok's #1 distribution signal. Re-create the angle.`;
+    else if(nf>=5)why=`<b>Follower magnet.</b> +${nf} new followers from this one — the payoff made people want more. Lead with this topic.`;
+    else why=`<b>Strong all-round.</b> ${fmt(vw)} views at ${er.toFixed(1)}% ER, ${aw.toFixed(1)}s avg watch. Solid hook + retention.`;
+    return `<div class="t5card"><div class="t5rank">${i+1}</div><div class="t5body"><div class="t5head"><span class="ttag">TIKTOK</span><a href="${v.video_share_url}" target="_blank">${(v.video_caption||'video').slice(0,46).replace(/\n/g,' ')} ↗</a></div><div class="t5metrics">Views <b>${fmt(vw)}</b> · Reach <b>${fmt(v.video_reach)}</b> · Avg watch <b>${aw.toFixed(1)}s</b> · Watch-thru <b>${thru.toFixed(0)}%</b> · Full-watched <b>${full.toFixed(1)}%</b> · Shares <b>${fmt(sh)}</b> · +${nf} foll.</div><div class="t5why">${why}</div></div></div>`;}).join('');
+
+  // ---- stats for insights ----
+  const shareRate=C.views?C.shares/C.views*1000:0;
+  const lowRet=cur.filter(v=>ttFull(v)<3).length;
+  const shortVids=durV.filter(v=>+v.video_duration<15).length;
+  const med=median(cur.map(v=>+v.video_views_count||0));
+  const bestRet=[...cur].sort((a,b)=>ttFull(b)-ttFull(a))[0];
+  const topShareV=[...cur].sort((a,b)=>(+b.video_shares||0)-(+a.video_shares||0))[0];
+
+  // ---- What's working ----
+  const work=[];
+  if(bestRet)work.push(['Your retention winner',`<b>${(bestRet.video_caption||'one video').slice(0,40)}…</b> hit ${ttFull(bestRet).toFixed(1)}% full-watched at ${(+bestRet.video_average_time_watched||0).toFixed(1)}s avg watch — far above your ${C.avgFull.toFixed(1)}% average.`,`<b>Recipe:</b> dissect its first 3 seconds + pacing and reuse that exact structure on your next 3 videos.`]);
+  if(C.avgWatch>0)work.push(['Watch-time is the lever TikTok rewards',`Avg watch time is ${C.avgWatch.toFixed(1)}s (${C.avgThru.toFixed(0)}% of video length). TikTok pushes videos that hold people — this is your most important number.`,`<b>Recipe:</b> open with the payoff/promise, cut dead air, and keep videos near ${C.avgDur.toFixed(0)}s only if they hold past 50%.`]);
+  if(shareRate>3)work.push(['Shares are carrying reach',`Share rate is ${shareRate.toFixed(1)} per 1k views${topShareV?` (best: ${fmt(topShareV.video_shares)} shares)`:''} — shares push you into non-follower For You feeds.`,`<b>Recipe:</b> end relatable/POV videos with a "kirim ke temen yang…" takeaway worth forwarding.`]);
+  work.push(['Named frameworks &amp; money angles',`Videos that name a method or show a concrete income/result over-index on saves &amp; new followers for your niche.`,`<b>Recipe:</b> give your method a sticky name, show 3 on-screen steps, close with a comment-to-DM lead magnet.`]);
+  $('ttWork').innerHTML=work.slice(0,4).map(w=>`<div class="inscard good"><div class="lbl">✓ Working</div><h4>${w[0]}</h4><p>${w[1]}</p><div class="fix">${w[2]}</div></div>`).join('');
+
+  // ---- What's NOT working ----
+  const bad=[];
+  if(lowRet>0)bad.push(['Low full-watched rate on most videos',`${lowRet} video${lowRet>1?'s':''} finished under 3% full-watched. On TikTok, low completion caps your For You distribution hard.`,`<b>Fix:</b> shorten to one idea, front-load the payoff in the first 2s, and cut anything that doesn't move the story.`]);
+  if(C.avgThru<25)bad.push(['Watch-through is below the danger line',`Avg watch-through is ${C.avgThru.toFixed(0)}% — people are dropping early. The opening isn't earning the next 3 seconds.`,`<b>Fix:</b> rewrite the first line as a specific promise or pattern-break; test 2 hooks per idea.`]);
+  if(shortVids>0)bad.push(['Some videos are too short to build watch-time',`${shortVids} video${shortVids>1?'s are':' is'} under 15s — too brief to accumulate the watch-time TikTok rewards once the hook lands.`,`<b>Fix:</b> when a hook works, give it a real payoff (20–40s) so total watch-time climbs.`]);
+  bad.push(['Off-niche virality dilutes the account',`Random viral videos (pets, comedy) spike views but bring an audience that doesn't follow or convert — and muddies your For You targeting.`,`<b>Fix:</b> keep ~80% inside content/editing/monetisation; if you post a fun one, bolt on a takeaway.`]);
+  bad.push(['Uneven posting keeps the floor low',`Inconsistent cadence means a low median (${fmt(med)} views). The fix is the floor, not the ceiling.`,`<b>Fix:</b> lock a fixed schedule of retention-optimised videos and let the winners compound.`]);
+  $('ttBad').innerHTML=bad.slice(0,5).map(b=>`<div class="inscard bad"><div class="lbl">✕ Fix this</div><h4>${b[0]}</h4><p>${b[1]}</p><div class="fix">${b[2]}</div></div>`).join('');
+
+  // ---- Creative Attribute Analysis (adds Avg Watch + Full%) ----
+  $('ttCaHead').textContent=`· ${C.n} videos · hook & angle inferred from caption · verdict vs period avg of ${fmt(C.avgV)} views`;
+  $('ttCaTbl').innerHTML=`<thead><tr><th>Video &amp; Link</th><th>Hook</th><th>Angle</th><th>Views</th><th>Reach</th><th>Avg Watch</th><th>Watch-Thru</th><th>Full-Watched</th><th>ER%</th><th>New Foll.</th><th>Verdict</th></tr></thead><tbody>`+
+  [...cur].sort((a,b)=>(+b.video_views_count||0)-(+a.video_views_count||0)).map(v=>{const vw=+v.video_views_count||0;const aw=+v.video_average_time_watched||0;const full=ttFull(v);const thru=ttThru(v);const dur=+v.video_duration||0;
+    const verd=vw>=C.avgV*1.15?'<span class="vtag v-over">Overperformer</span>':(vw<=C.avgV*0.6?'<span class="vtag v-under">Underperformer</span>':'<span class="vtag v-mix">On par</span>');
+    const fcls=full>=8?'v-work':(full>=3?'v-mix':'v-weak');
+    return `<tr><td><a href="${v.video_share_url}" target="_blank">${(v.video_create_datetime||'').slice(5,10)} ↗</a></td><td class="hl">${hookOf(v.video_caption)}</td><td><span class="angtag">${angleOf(v.video_caption)}</span></td><td>${fmt(vw)}</td><td>${fmt(v.video_reach)}</td><td>${aw.toFixed(1)}s</td><td>${dur?thru.toFixed(0)+'%':'—'}</td><td><span class="vtag ${fcls}">${full.toFixed(1)}%</span></td><td>${ttER(v).toFixed(1)}</td><td>${(+v.video_new_followers||0)>0?'+'+(+v.video_new_followers||0):0}</td><td>${verd}</td></tr>`;}).join('')+`</tbody>`;
+
+  // ---- Full Detail ----
+  const rows=[...cur].sort((a,b)=>new Date(b.video_create_datetime)-new Date(a.video_create_datetime));
+  $('ttTbl').innerHTML=`<thead><tr><th>#</th><th>Date</th><th>Caption</th><th>Dur</th><th>Views</th><th>Reach</th><th>Avg Watch</th><th>Watch-Thru</th><th>Full-Watched</th><th>ER%</th><th>New Foll.</th><th>Link</th></tr></thead><tbody>`+
+  rows.map((v,i)=>{const dur=+v.video_duration||0;const aw=+v.video_average_time_watched||0;const thru=ttThru(v);const full=ttFull(v);const nf=+v.video_new_followers||0;
     const cls=full>=8?'v-work':(full>=3?'v-mix':'v-weak');
-    return `<tr><td>${i+1}</td><td>${(v.video_create_datetime||'').slice(0,10)}</td><td class="hl">${(v.video_caption||'—').slice(0,55).replace(/\n/g,' ')}</td><td>${dur?dur.toFixed(0)+'s':'—'}</td><td>${fmt(v.video_views_count)}</td><td>${fmt(v.video_reach)}</td><td>${aw.toFixed(1)}s</td><td>${dur?thru.toFixed(0)+'%':'—'}</td><td><span class="vtag ${cls}">${full.toFixed(1)}%</span></td><td>${nf>0?'+'+nf:nf}</td><td><a href="${v.video_share_url}" target="_blank">open ↗</a></td></tr>`;}).join('')+`</tbody>`;
+    return `<tr><td>${i+1}</td><td>${(v.video_create_datetime||'').slice(0,10)}</td><td class="hl">${(v.video_caption||'—').slice(0,50).replace(/\n/g,' ')}</td><td>${dur?dur.toFixed(0)+'s':'—'}</td><td>${fmt(v.video_views_count)}</td><td>${fmt(v.video_reach)}</td><td>${aw.toFixed(1)}s</td><td>${dur?thru.toFixed(0)+'%':'—'}</td><td><span class="vtag ${cls}">${full.toFixed(1)}%</span></td><td>${ttER(v).toFixed(1)}</td><td>${nf>0?'+'+nf:nf}</td><td><a href="${v.video_share_url}" target="_blank">open ↗</a></td></tr>`;}).join('')+`</tbody>`;
 }
 
 function sum(a,f){return a.reduce((s,m)=>s+(+f(m)||0),0);}
