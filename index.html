@@ -312,7 +312,7 @@ async function load(){
 }
 
 const TT_FIELDS=["video_id","video_create_datetime","video_caption","video_duration","video_views_count","video_reach","video_likes","video_comments","video_shares","video_favorites","video_average_time_watched","video_full_watched_rate","video_new_followers","video_share_url"];
-const TT_ACCT=["date","total_followers_count","profile_views","engaged_audience"];
+const TT_ACCT=["date","total_followers_count","profile_views"];
 const ttThru=v=>{const d=+v.video_duration||0;return d?(+v.video_average_time_watched||0)/d*100:0;};
 const ttFull=v=>(+v.video_full_watched_rate||0)*100;
 const ttEng=v=>(+v.video_likes||0)+(+v.video_comments||0)+(+v.video_shares||0)+(+v.video_favorites||0);
